@@ -7,15 +7,15 @@ This deamon has been created for the eTrex 30 model, it uses the GarminDevice.xm
 Warning: this service has no additional security features. As long you are the only one with network access to this server there is no problem. Everyone who can access this the webserver will have the ability to access your GPS and bring the system t halt. And using the debug feature it may have full control to your Raspberry pi.
 
 # Install 
+  
+## clone or extract files into /opt/gps-hub
 <code>
-#  
-# clone or extract files into /opt/gps-hub
-#
 cd /opt && git clone https://github.com/wie-niet/gps-hub.git
+</code>
 
-#
-# Install systemd.service
-#
+
+## Install systemd.service
+<code>
 cd /opt/gps-hub
 cp systemd.gps-hub.service /etc/systemd/system/gps-hub.servic
 chmod 644 /etc/systemd/system/gps-hub.service
