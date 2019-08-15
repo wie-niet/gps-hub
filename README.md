@@ -9,20 +9,19 @@ Warning: this service has no additional security features. As long you are the o
 # Install 
   
 ## clone or extract files into /opt/gps-hub
-<code>
+```
 cd /opt && git clone https://github.com/wie-niet/gps-hub.git
-</code>
+```
 
 
 ## Install systemd.service
-<code>
+```
 cd /opt/gps-hub
 cp systemd.gps-hub.service /etc/systemd/system/gps-hub.servic
 chmod 644 /etc/systemd/system/gps-hub.service
 systemctl daemon-reload
 systemctl enable gps-hub
-
-</code>
+```
 
 # Prepare for the on the road
 1. setup your cellphone as hotspot.  
