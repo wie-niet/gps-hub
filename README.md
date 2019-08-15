@@ -36,10 +36,9 @@ systemctl enable gps-hub
 4. Now you can connect with your cell phone to the your Raspberry pi ( for me it is http://raspberrypi.local. )
 5. Use the 'mount' button to mount the USB disk
 6. now you can use the upload form to upload gpx file.
-
-when ready...
-7. Use the 'umount' button to umount the USB disk
-8. Detach the USB Garmin
-9. Refresh the page by clicking the title, and use the 'halt' button to shutdown the Raspberry pi.
+### When finished
+1. Use the 'umount' button to umount the USB disk
+2. Detach the USB Garmin
+3. Refresh the page by clicking the title, and use the 'halt' button to shutdown the Raspberry pi.
 
 
