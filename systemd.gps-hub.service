@@ -1,0 +1,12 @@
+[Unit]
+Description=gps-hub
+After=network.target
+
+[Service]
+Type=forking
+Restart=on-failure
+RestartSec=3
+ExecStart=/usr/bin/screen -L -dmS gps-hub  python3 /opt/gps-hub/web.py
+
+[Install]
+WantedBy=multi-user.target
