@@ -37,6 +37,7 @@ systemctl enable gps-hub
 5. Use the 'mount' button to mount the USB disk
 6. now you can use the upload form to upload gpx file.
 
+when ready...
 7. Use the 'umount' button to umount the USB disk
 8. Detach the USB Garmin
 9. Refresh the page by clicking the title, and use the 'halt' button to shutdown the Raspberry pi.
