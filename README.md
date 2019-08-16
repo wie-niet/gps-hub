@@ -1,8 +1,8 @@
 # gps-hub
-Garmin USB web hub. Upload gpx files to your USB Garmin GPS device from you smartphone.
-install web deamon on a Raspberry pi and you can acces your old fashion USB GPS on the go.
+Garmin USB web hub. Upload gpx files to your USB Garmin GPS device from your smartphone.
+Install this web deamon on a Raspberry pi and you can acces your old fashion USB GPS on the go.
 
-This deamon has been created for the eTrex 30 model, it uses the GarminDevice.xml file to find the "UserDataSync" folder.
+This deamon has been created for the eTrex 30 model, it uses the GarminDevice.xml file to find the "UserDataSync" folder. 
 
 Warning: this service has no additional security features. As long you are the only one with network access to this server there is no problem. Everyone who can access this the webserver will have the ability to access your GPS and bring the system t halt. And using the debug feature it may have full control to your Raspberry pi.
 
@@ -36,4 +36,9 @@ systemctl enable gps-hub
 4. Now you can connect with your cell phone to the your Raspberry pi ( for me it is http://raspberrypi.local. )
 5. Use the 'mount' button to mount the USB disk
 6. now you can use the upload form to upload gpx file.
+### When finished
+1. Use the 'umount' button to umount the USB disk
+2. Detach the USB Garmin
+3. Refresh the page by clicking the title, and use the 'halt' button to shutdown the Raspberry pi.
+
 
