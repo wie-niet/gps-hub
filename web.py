@@ -77,6 +77,9 @@ def pageAction():
        file = request.files['file']
        if file and file.filename.lower().endswith('.'+extension.lower()):
            filename = secure_filename(file.filename)
+           if os.path.exists(os.path.join(uploadPath, filename)):
+               return """error: filename already exists..."""
+
            file.save(os.path.join(uploadPath, filename))
            return redirect(url_for('index'))
        else:
