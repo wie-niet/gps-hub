@@ -50,7 +50,8 @@
 		</p>
 		<ul>
 			{% for file in gps.listdir(Name=folderName) %} {% if file.lower().endswith('.gpx') %}
-			<li>{{ file|e }} <i>{{ gps.getTrackNameFromGPX(file, folderName)|e }}</i>
+			<li>{{ file|e }} <i>{{ gps.getTrackNameFromGPX(file, folderName)|e }}</i><form><input type="hidden" name="folder_name" value="{{ folderName }}"><input type="hidden" name="file_name" value="{{ file|e }}">                        <button type="submit" formmethod="post" formaction="/action" name="action" value="file_download">download</button></form>
+			
 			</li>{% else %}
 			<li>{{ file|e }}
 			</li>{% endif %} {% else %}

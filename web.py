@@ -1,7 +1,7 @@
 #!/usr/bin/env python 
 import os
 
-from flask import Flask, request, redirect, url_for, jsonify, render_template, render_template_string
+from flask import Flask, request, redirect, url_for, jsonify, render_template, render_template_string, send_file
 from werkzeug import secure_filename
 import sh
 import random
@@ -24,8 +24,12 @@ def index():
 #
 # actions mount/umout/halt/file upload etc.
 #
-@app.route("/action", methods=['POST'])
+@app.route("/action", methods=['POST', 'GET'])
 def pageAction():
+    # redirect all GET requests back to the main index 
+    if request.method != 'POST':
+        return redirect(url_for('index'))
+
     # action nothing: redirect back to index
     if request.form['action'] == "nothing":
         return redirect(url_for('index'))
@@ -33,14 +37,17 @@ def pageAction():
     # action mount usb disk
     if request.form['action'] == "mount":
        gps.mount()
+       return redirect(url_for('index'))
         
     # action read GarminDevice.xml config file
     elif request.form['action'] == "read_device_xml":
        gps.readGarminDeviceXml()
+       return redirect(url_for('index'))
 
     # action umount usb disk (a.k.a. eject )
     elif request.form['action'] == "umount":
        gps.umount()
+       return redirect(url_for('index'))
 
     # action bring system to a proper halt
     elif request.form['action'] == "system_halt":
@@ -71,14 +78,23 @@ def pageAction():
        if file and file.filename.lower().endswith('.'+extension.lower()):
            filename = secure_filename(file.filename)
            file.save(os.path.join(uploadPath, filename))
+           return redirect(url_for('index'))
        else:
            return """error: no valid file ..."""
+
+    # action download file 
+    elif request.form['action'] == "file_download":
+       folderName = request.form['folder_name']
+       fileName = request.form['file_name']
+
+       return send_file(os.path.join(gps.getFolderPathByName(folderName), fileName), as_attachment=True, attachment_filename=os.path.basename(fileName))
+
+
 	
     # action invalid
     else:
        return """error: no valid action given..."""
 
-    return redirect(url_for('index'))
 
 
 
