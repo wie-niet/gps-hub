@@ -51,6 +51,6 @@ GPS-HUB:
   - update()  - 
 
 #### GpxFileData
-  - # download or view gpx file over HTTP
+  download or view gpx file over HTTP
   - id = $file_name
   - get() # ?download=1 to serve as attachment.
