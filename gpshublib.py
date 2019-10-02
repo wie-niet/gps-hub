@@ -12,12 +12,13 @@ class DeviceHardware:
 
 	def get(self):
 		list = {}
-		#list = self.read_udev_list()
+        
+		#list = self.read_udev_list() # no argument for all udev entries.
 		list = self.read_udev_list(['ID_FS_LABEL', 'ID_MODEL', 'ID_VENDOR', 'ID_FS_TYPE', 'ID_FS_USAGE', 'ID_FS_VERSION', 'ID_SERIAL_SHORT'])
 
 		list['ID_FS_UUID']=self.ID_FS_UUID
-		list['sys_is_mounted'] = self.get_is_mounted()
-		list['sys_is_connected'] = self.get_is_connected()
+		list['sys_is_mounted'] = self.get_sys_is_mounted()
+		list['sys_is_connected'] = self.get_sys_is_connected()
 		list['sys_mountpoint'] = self.get_sys_mountpoint()
 		list['sys_dev_path'] = self.get_sys_dev_path()
 
@@ -50,14 +51,14 @@ class DeviceHardware:
 	def get_sys_dev_path(self):
 		return('/dev/disk/by-uuid/' + str(self.ID_FS_UUID))
 
-	def get_is_connected(self):
+	def get_sys_is_connected(self):
 		"""is the device connected, does the dev point exist"""
 		try:
 			return stat.S_ISBLK(os.stat(os.path.realpath(self.get_sys_dev_path())).st_mode)
 		except:
 			return False
 
-	def get_is_mounted(self):
+	def get_sys_is_mounted(self):
 		"""is the device mounted"""
 		mount_point = self.get_sys_mountpoint()
 		return(os.path.ismount(mount_point))
@@ -66,9 +67,9 @@ class DeviceHardware:
 		return str(self.__class__) + ": " + str(self.__dict__)
 
 	def set_sys_is_mounted(self, sys_is_mounted):
-		if(sys_is_mounted == True and self.get_is_mounted() == False):
+		if(sys_is_mounted == True and self.get_sys_is_mounted() == False):
 			self.mount()
-		if(sys_is_mounted == False and self.get_is_mounted() == True):
+		if(sys_is_mounted == False and self.get_sys_is_mounted() == True):
 			self.umount()
 		# the rest we silently ignore..
 		return(self)
@@ -107,6 +108,10 @@ class DeviceHardwareList:
 	def __getitem__(self, ID_FS_UUID):
 		return(DeviceHardware(ID_FS_UUID))
 
+
+    #
+    #  add|remove hardware events
+    #
 	def udev_device_event(self, action, ID_FS_UUID):
 		print ("udev " + action + " event " + ID_FS_UUID)
 		if action == "add":
@@ -124,11 +129,10 @@ class DeviceHardwareList:
 	def udev_device_event_remove(self, ID_FS_UUID):
 		if ID_FS_UUID in self._automount_uuids:
 			d = DeviceHardware(ID_FS_UUID)
-			if d.get_is_mounted() == True:
+			if d.get_sys_is_mounted() == True:
 				print ("event auto umount " + ID_FS_UUID)
 				d.umount()
 				
-
 	def udev_listner(self):
 		''' start blocking look while listning to for harwdware changes'''
 
