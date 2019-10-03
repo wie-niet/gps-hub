@@ -1,22 +1,25 @@
-import pyudev
 import os
-import sh
 import stat
+import sh
+import pyudev
 
 class DeviceHardware:
 	''' device hardware '''
 	ID_FS_UUID = None
-	
-	def __init__(self,ID_FS_UUID):
+
+	def __init__(self, ID_FS_UUID):
 		self.ID_FS_UUID = ID_FS_UUID
 
 	def get(self):
 		list = {}
-        
-		#list = self.read_udev_list() # no argument for all udev entries.
-		list = self.read_udev_list(['ID_FS_LABEL', 'ID_MODEL', 'ID_VENDOR', 'ID_FS_TYPE', 'ID_FS_USAGE', 'ID_FS_VERSION', 'ID_SERIAL_SHORT'])
 
-		list['ID_FS_UUID']=self.ID_FS_UUID
+		#list = self.read_udev_list() # no argument for all udev entries.
+		list = self.read_udev_list([
+            'ID_FS_LABEL', 'ID_MODEL', 'ID_VENDOR', 'ID_FS_TYPE',
+            'ID_FS_USAGE', 'ID_FS_VERSION', 'ID_SERIAL_SHORT'
+            ])
+
+		list['ID_FS_UUID'] = self.ID_FS_UUID
 		list['sys_is_mounted'] = self.get_sys_is_mounted()
 		list['sys_is_connected'] = self.get_sys_is_connected()
 		list['sys_mountpoint'] = self.get_sys_mountpoint()
@@ -26,9 +29,9 @@ class DeviceHardware:
 
 	def read_udev_list(self, filter_keys=None):
 		context = pyudev.Context()
-		for device in context.list_devices(subsystem='block', ID_FS_UUID=self.ID_FS_UUID ):
+		for device in context.list_devices(subsystem='block', ID_FS_UUID=self.ID_FS_UUID):
 			list = {}
-			
+
 			# either use filter_keys or all keys in device
 			if filter_keys is None:
 				filter_keys = device.keys()
@@ -39,7 +42,7 @@ class DeviceHardware:
 			return(list)
 		## nothing found:
 		list = {}
-		list['ID_FS_UUID']=self.ID_FS_UUID
+		list['ID_FS_UUID'] = self.ID_FS_UUID
 		list['sys_is_mounted'] = 0
 		list['sys_is_connected'] = 0
 		return(list)
@@ -68,14 +71,14 @@ class DeviceHardware:
 
 	def set_sys_is_mounted(self, sys_is_mounted):
 		if(sys_is_mounted == True and self.get_sys_is_mounted() == False):
-			self.mount()
+			self.exec_mount()
 		if(sys_is_mounted == False and self.get_sys_is_mounted() == True):
-			self.umount()
+			self.exec_umount()
 		# the rest we silently ignore..
 		return(self)
 
-	def mount(self):
-		"""mount the device"""
+	def exec_mount(self):
+		"""mount the device and make mountpoint dir /media/gpshub-.... """
 		
 		mount_point = self.get_sys_mountpoint()
 		dev_path = self.get_sys_dev_path()
@@ -84,8 +87,8 @@ class DeviceHardware:
 			os.makedirs(mount_point) 
 		sh.mount(dev_path, mount_point)
 
-	def umount(self):
-		"""umount the device"""
+	def exec_umount(self):
+		"""umount the device and remove mountpoint"""
 		mount_point = self.get_sys_mountpoint()
 
 		sh.umount(mount_point)
@@ -109,16 +112,17 @@ class DeviceHardwareList:
 		return(DeviceHardware(ID_FS_UUID))
 
 
-    #
-    #  add|remove hardware events
-    #
+	#
+	#  add|remove hardware events
+	#
 	def udev_device_event(self, action, ID_FS_UUID):
 		print ("udev " + action + " event " + ID_FS_UUID)
 		if action == "add":
 			self.udev_device_event_add(ID_FS_UUID)
 		if action == "remove":
 			self.udev_device_event_remove(ID_FS_UUID)
-		print DeviceHardware(ID_FS_UUID).get()
+
+		print(DeviceHardware(ID_FS_UUID).get())
 
 	def udev_device_event_add(self, ID_FS_UUID):
 		if ID_FS_UUID in self._automount_uuids:
@@ -127,14 +131,15 @@ class DeviceHardwareList:
 			d.set_sys_is_mounted(1)
 
 	def udev_device_event_remove(self, ID_FS_UUID):
+		'''Auto umount when still mounted after hardware is detached.'''
 		if ID_FS_UUID in self._automount_uuids:
 			d = DeviceHardware(ID_FS_UUID)
-			if d.get_sys_is_mounted() == True:
+			if d.get_sys_is_mounted():
 				print ("event auto umount " + ID_FS_UUID)
-				d.umount()
+				d.exec_umount()
 				
 	def udev_listner(self):
-		''' start blocking look while listning to for harwdware changes'''
+		'''start blocking look while listning to for harwdware changes'''
 
 		print('start monitor:')
 		context = pyudev.Context()
