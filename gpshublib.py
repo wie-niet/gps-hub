@@ -40,12 +40,9 @@ class DeviceHardware:
 				list[k] = device.get(k)
 
 			return(list)
-		## nothing found:
-		list = {}
-		list['ID_FS_UUID'] = self.ID_FS_UUID
-		list['sys_is_mounted'] = 0
-		list['sys_is_connected'] = 0
-		return(list)
+		
+        # nothing found, return empty list:
+		return({})
 			
 	def get_sys_mountpoint(self):
 		mnt_base = '/media/gpshub-'
