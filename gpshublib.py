@@ -11,39 +11,39 @@ class DeviceHardware:
 		self.ID_FS_UUID = ID_FS_UUID
 
 	def get(self):
-		list = {}
+		data = {}
 
-		#list = self.read_udev_list() # no argument for all udev entries.
-		list = self.read_udev_list([
+		#data = self.read_udev_list() # no argument for all udev entries.
+		data = self.read_udev_list([
             'ID_FS_LABEL', 'ID_MODEL', 'ID_VENDOR', 'ID_FS_TYPE',
             'ID_FS_USAGE', 'ID_FS_VERSION', 'ID_SERIAL_SHORT'
             ])
 
-		list['ID_FS_UUID'] = self.ID_FS_UUID
-		list['sys_is_mounted'] = self.get_sys_is_mounted()
-		list['sys_is_connected'] = self.get_sys_is_connected()
-		list['sys_mountpoint'] = self.get_sys_mountpoint()
-		list['sys_dev_path'] = self.get_sys_dev_path()
+		data['ID_FS_UUID'] = self.ID_FS_UUID
+		data['sys_is_mounted'] = self.get_sys_is_mounted()
+		data['sys_is_connected'] = self.get_sys_is_connected()
+		data['sys_mountpoint'] = self.get_sys_mountpoint()
+		data['sys_dev_path'] = self.get_sys_dev_path()
 
-		return(list)
+		return(data)
 
 	def read_udev_list(self, filter_keys=None):
 		context = pyudev.Context()
 		for device in context.list_devices(subsystem='block', ID_FS_UUID=self.ID_FS_UUID):
-			list = {}
+			data = {}
 
 			# either use filter_keys or all keys in device
 			if filter_keys is None:
 				filter_keys = device.keys()
 
 			for k in filter_keys:
-				list[k] = device.get(k)
+				data[k] = device.get(k)
 
-			return(list)
-		
+			return(data)
+
         # nothing found, return empty list:
 		return({})
-			
+
 	def get_sys_mountpoint(self):
 		mnt_base = '/media/gpshub-'
 		return(mnt_base + str(self.ID_FS_UUID))
@@ -76,12 +76,12 @@ class DeviceHardware:
 
 	def exec_mount(self):
 		"""mount the device and make mountpoint dir /media/gpshub-.... """
-		
+
 		mount_point = self.get_sys_mountpoint()
 		dev_path = self.get_sys_dev_path()
 
 		if not os.path.isdir(mount_point):
-			os.makedirs(mount_point) 
+			os.makedirs(mount_point)
 		sh.mount(dev_path, mount_point)
 
 	def exec_umount(self):
@@ -91,19 +91,19 @@ class DeviceHardware:
 		sh.umount(mount_point)
 		os.rmdir(mount_point)
 
-	
-	
+
+
 class DeviceHardwareList:
 	_automount_uuids = []
 
-	def getList(self):
-		list = []
+	def get(self):
+		data = []
 		context = pyudev.Context()
-		for device in context.list_devices(subsystem='block', ID_BUS="usb" ):
+		for device in context.list_devices(subsystem='block', ID_BUS="usb"):
 			ID_FS_UUID = device.get('ID_FS_UUID')
-			if ID_FS_UUID is not None: list.append(DeviceHardware(ID_FS_UUID))
+			if ID_FS_UUID is not None: data.append(DeviceHardware(ID_FS_UUID))
 
-		return(list)
+		return(data)
 
 	def __getitem__(self, ID_FS_UUID):
 		return(DeviceHardware(ID_FS_UUID))
@@ -113,7 +113,7 @@ class DeviceHardwareList:
 	#  add|remove hardware events
 	#
 	def udev_device_event(self, action, ID_FS_UUID):
-		print ("udev " + action + " event " + ID_FS_UUID)
+		print("udev " + action + " event " + ID_FS_UUID)
 		if action == "add":
 			self.udev_device_event_add(ID_FS_UUID)
 		if action == "remove":
@@ -123,18 +123,18 @@ class DeviceHardwareList:
 
 	def udev_device_event_add(self, ID_FS_UUID):
 		if ID_FS_UUID in self._automount_uuids:
-			d = DeviceHardware(ID_FS_UUID)
-			print ("event automount " + ID_FS_UUID)
-			d.set_sys_is_mounted(1)
+			dev_hw = DeviceHardware(ID_FS_UUID)
+			print("event automount " + ID_FS_UUID)
+			dev_hw.set_sys_is_mounted(1)
 
 	def udev_device_event_remove(self, ID_FS_UUID):
 		'''Auto umount when still mounted after hardware is detached.'''
 		if ID_FS_UUID in self._automount_uuids:
-			d = DeviceHardware(ID_FS_UUID)
-			if d.get_sys_is_mounted():
-				print ("event auto umount " + ID_FS_UUID)
-				d.exec_umount()
-				
+			dev_hw = DeviceHardware(ID_FS_UUID)
+			if dev_hw.get_sys_is_mounted():
+				print("event auto umount " + ID_FS_UUID)
+				dev_hw.exec_umount()
+
 	def udev_listner(self):
 		'''start blocking look while listning to for harwdware changes'''
 
@@ -146,7 +146,6 @@ class DeviceHardwareList:
 		for device in iter(monitor.poll, None):
 			ID_FS_UUID = device.get('ID_FS_UUID')
 			#ID_BUS  = device.get('ID_BUS')
-			#if ID_FS_UUID is not None and ID_BUS is "usb": 
+			#if ID_FS_UUID is not None and ID_BUS is "usb":
 			if ID_FS_UUID is not None:
 				self.udev_device_event(device.action, ID_FS_UUID)
-
