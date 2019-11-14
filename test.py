@@ -2,9 +2,9 @@ import json
 import gpshublib
 
 d = gpshublib.DeviceHardwareList()
-print(d.getList())
+print(d.get())
 
-for a in d.getList():
+for a in d.get():
 	print(a)
 	print(json.dumps(a.get(), indent=4))
 
