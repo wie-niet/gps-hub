@@ -1,4 +1,5 @@
-import simplejson as json
+# import simplejson as json
+import json
 import toml
 import os
 import jsonpatch
@@ -155,21 +156,21 @@ class DeviceHardwareRestApi(RestApi):
 			self.response(data, 400)
 	
 
-	# print("DEBUG:", type(request.get_json()), request.get_json())
-	# new_data = patch.appply(data)
-	# for k in new_data.keys():
-	#	 data[k] = new_data[k]
-	#
-	# for k in [x for x in data.keys() if x not in new_data.keys()]:
-	#	 del(data[k])
+		# print("DEBUG:", type(request.get_json()), request.get_json())
+		# new_data = patch.appply(data)
+		# for k in new_data.keys():
+		#	 data[k] = new_data[k]
+		#
+		# for k in [x for x in data.keys() if x not in new_data.keys()]:
+		#	 del(data[k])
 
-	# make sure hwid isn't changed:
-	data['hwid'] = hwid
+		# make sure hwid isn't changed:
+		data['hwid'] = hwid
 	
-	# write changes
-	self.__conf_list.file_write()
+		# write changes
+		self.__conf_list.file_write()
 	
-	# HTTP response
-	self.response(data, 200)
+		# HTTP response
+		self.response(data, 200)
 	
 
