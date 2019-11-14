@@ -1,5 +1,6 @@
 from flask.views import MethodView
 from flask import make_response, jsonify, request, abort
+import json
 
 # from orator.exceptions.query import QueryException
 
@@ -10,6 +11,41 @@ from flask import make_response, jsonify, request, abort
 #
 # HTTP status codes: https://restfulapi.net/http-status-codes/
 #
+
+class ApiItem(object):
+	def to_dict(self):
+		'''Likely you need to replace this method.'''
+		return(self.__dict__)
+
+	def to_json(self, *args, **kwargs):
+		'''json dumps this object.
+
+		it calls self.to_dict() to get all attributes.
+		replace the to_dict(self) method in your own class.
+		'''
+		return(json.dumps(self.get(), *args, **kwargs))
+
+
+class ApiList(object):
+	def to_list(self):
+		# empty list
+		result = []
+		
+		# itterate over our items items 
+		for item in self.get():
+			# get item as dict.
+			result.append(item.get())
+			
+		return(result)
+
+	def to_json(self,  *args, **kwargs):
+		'''json dumps this object.
+
+		it calls self.to_list() to get all attributes.
+		replace the to_dict(self) method in your own class.
+		'''
+		return(json.dumps(self.to_list(),  *args, **kwargs))
+
 
 class RestApi(MethodView):
     json_schema = ''

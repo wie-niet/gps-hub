@@ -2,10 +2,10 @@ import os
 import stat
 import sh
 import pyudev
-from flask_rest_api import RestApi
+from flask_rest_api import RestApi, ApiItem, ApiList
 import json
 
-class DeviceHardware:
+class DeviceHardware(ApiItem):
 	''' device hardware '''
 	ID_FS_UUID = None
 	
@@ -109,7 +109,7 @@ class DeviceHardware:
 
 
 
-class DeviceHardwareList():
+class DeviceHardwareList(ApiList):
 	# tmp solution, should be in config
 	_automount_uuids = []
 
@@ -122,16 +122,19 @@ class DeviceHardwareList():
 
 		return(data)
 	
-	def to_json(self,  *args, **kwargs):
-		# empty list
-		result = []
-		
-		# itterate over DeviceHardware items 
-		for item in self.get():
-			# get item as dict.
-			result.append(item.get())
-			
-		return(json.dumps(result,  *args, **kwargs))	
+	# def to_list(self):
+	# 	# empty list
+	# 	result = []
+	#
+	# 	# itterate over DeviceHardware items
+	# 	for item in self.get():
+	# 		# get item as dict.
+	# 		result.append(item.get())
+	#
+	# 	return(result)
+	#
+	# def to_json(self,  *args, **kwargs):
+		# return(json.dumps(self.to_list(),  *args, **kwargs))
 		
 
 	def find(self, ID_FS_UUID):
