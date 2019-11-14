@@ -10,6 +10,9 @@ class DeviceHardware:
 	def __init__(self, ID_FS_UUID):
 		self.ID_FS_UUID = ID_FS_UUID
 
+	def __str__(self):
+		return str(self.__class__) + ": " + str(self.__dict__)
+
 	def get(self):
 		data = {}
 
@@ -44,29 +47,31 @@ class DeviceHardware:
         # nothing found, return empty list:
 		return({})
 
-	def get_sys_mountpoint(self):
+    @property
+	def sys_mountpoint(self):
 		mnt_base = '/media/gpshub-'
 		return(mnt_base + str(self.ID_FS_UUID))
 
-	def get_sys_dev_path(self):
+    @property
+	def sys_dev_path(self):
 		return('/dev/disk/by-uuid/' + str(self.ID_FS_UUID))
 
-	def get_sys_is_connected(self):
+    @property
+	def sys_is_connected(self):
 		"""is the device connected, does the dev point exist"""
 		try:
 			return stat.S_ISBLK(os.stat(os.path.realpath(self.get_sys_dev_path())).st_mode)
 		except:
 			return False
 
-	def get_sys_is_mounted(self):
+    @property
+	def sys_is_mounted(self):
 		"""is the device mounted"""
 		mount_point = self.get_sys_mountpoint()
 		return(os.path.ismount(mount_point))
 
-	def __str__(self):
-		return str(self.__class__) + ": " + str(self.__dict__)
-
-	def set_sys_is_mounted(self, sys_is_mounted):
+    @sys_is_mounted.setter
+	def sys_is_mounted(self, sys_is_mounted):
 		if(sys_is_mounted == True and self.get_sys_is_mounted() == False):
 			self.exec_mount()
 		if(sys_is_mounted == False and self.get_sys_is_mounted() == True):
