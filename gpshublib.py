@@ -31,9 +31,12 @@ class DeviceHardware(ApiItem):
 		data['sys_dev_path'] = self.sys_dev_path
 
 		return(data)
+	
+	def to_dict(self):
+		return(self.get())
 		
-	def to_json(self, *args, **kwargs):
-		return(json.dumps(self.get(), *args, **kwargs))
+	# def to_json(self, *args, **kwargs):
+	# 	return(json.dumps(self.get(), *args, **kwargs))
 
 	def read_udev_list(self, filter_keys=None):
 		context = pyudev.Context()
