@@ -149,3 +149,24 @@ class DeviceHardwareList:
 			#if ID_FS_UUID is not None and ID_BUS is "usb":
 			if ID_FS_UUID is not None:
 				self.udev_device_event(device.action, ID_FS_UUID)
+
+class DeviceConfig:
+	'''Config settings for an GPS device, with functions to read/update/delete'''
+	ID_FS_UUID = None
+
+	def get(self):
+		data = {}
+		data.ID_FS_UUID = self.ID_FS_UUID
+		return(data)
+
+class DeviceConfigList:
+	'''List of all config settings in DeviceConfig objects. with functions to read/update/delete/create '''
+	def get(self):
+		''' get list of DeviceConfig objects '''
+		#TODO read config.
+		return([])
+
+	def add(self, device_config):
+		''' add new DeviceConfig objects '''
+		#TODO: addd device_config to list
+		return(device_config)
