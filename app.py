@@ -13,7 +13,7 @@ app.debug = True
 gps_hw_view = gpshublib.DeviceHardwareRestApi.as_view('gps_hw_api')
 app.add_url_rule('/gps_hw/', defaults={'id': None}, view_func=gps_hw_view, methods=['GET',])
 app.add_url_rule('/gps_hw/', view_func=gps_hw_view, methods=['POST',])
-app.add_url_rule('/gps_hw/<int:id>', view_func=gps_hw_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
+app.add_url_rule('/gps_hw/<id>', view_func=gps_hw_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
 
 
