@@ -164,7 +164,8 @@ class DeviceHardwareList():
 				self.udev_device_event(device.action, ID_FS_UUID)
 
 
-	
+
+from flask_rest_api import RestApi	
 				
 class DeviceHardwareRestApi(RestApi):
 	def __init__(self, dev_hw_list=None):
