@@ -69,7 +69,7 @@ class DeviceHardwareRestApi(RestApi):
 		if conf_list is None:
 			conf_list = GpsConfigCollection()
 
-		self.__conf_list = dev_hw_list
+		self.__conf_list = conf_list
 	
 	#
 	# Datalayer methods 
