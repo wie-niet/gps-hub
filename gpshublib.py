@@ -23,10 +23,10 @@ class DeviceHardware:
 			])
 
 		data['ID_FS_UUID'] = self.ID_FS_UUID
-		data['sys_is_mounted'] = self.get_sys_is_mounted()
-		data['sys_is_connected'] = self.get_sys_is_connected()
-		data['sys_mountpoint'] = self.get_sys_mountpoint()
-		data['sys_dev_path'] = self.get_sys_dev_path()
+		data['sys_is_mounted'] = self.sys_is_mounted
+		data['sys_is_connected'] = self.sys_is_connected
+		data['sys_mountpoint'] = self.sys_mountpoint
+		data['sys_dev_path'] = self.sys_dev_path
 
 		return(data)
 
@@ -60,21 +60,21 @@ class DeviceHardware:
 	def sys_is_connected(self):
 		"""is the device connected, does the dev point exist"""
 		try:
-			return stat.S_ISBLK(os.stat(os.path.realpath(self.get_sys_dev_path())).st_mode)
+			return stat.S_ISBLK(os.stat(os.path.realpath(self.sys_dev_path)).st_mode)
 		except:
 			return False
 
 	@property
 	def sys_is_mounted(self):
 		"""is the device mounted"""
-		mount_point = self.get_sys_mountpoint()
+		mount_point = self.sys_mountpoint
 		return(os.path.ismount(mount_point))
 
 	@sys_is_mounted.setter
 	def sys_is_mounted(self, sys_is_mounted):
-		if(sys_is_mounted == True and self.get_sys_is_mounted() == False):
+		if(sys_is_mounted == True and self.sys_is_mounted == False):
 			self.exec_mount()
-		if(sys_is_mounted == False and self.get_sys_is_mounted() == True):
+		if(sys_is_mounted == False and self.sys_is_mounted == True):
 			self.exec_umount()
 		# the rest we silently ignore..
 		return(self)
@@ -82,8 +82,8 @@ class DeviceHardware:
 	def exec_mount(self):
 		"""mount the device and make mountpoint dir /media/gpshub-.... """
 
-		mount_point = self.get_sys_mountpoint()
-		dev_path = self.get_sys_dev_path()
+		mount_point = self.sys_mountpoint
+		dev_path = self.sys_dev_path
 
 		if not os.path.isdir(mount_point):
 			os.makedirs(mount_point)
@@ -91,7 +91,7 @@ class DeviceHardware:
 
 	def exec_umount(self):
 		"""umount the device and remove mountpoint"""
-		mount_point = self.get_sys_mountpoint()
+		mount_point = self.sys_mountpoint
 
 		sh.umount(mount_point)
 		os.rmdir(mount_point)
@@ -130,13 +130,13 @@ class DeviceHardwareList:
 		if ID_FS_UUID in self._automount_uuids:
 			dev_hw = DeviceHardware(ID_FS_UUID)
 			print("event automount " + ID_FS_UUID)
-			dev_hw.set_sys_is_mounted(1)
+			dev_hw.sys_is_mounted = 1
 
 	def udev_device_event_remove(self, ID_FS_UUID):
 		'''Auto umount when still mounted after hardware is detached.'''
 		if ID_FS_UUID in self._automount_uuids:
 			dev_hw = DeviceHardware(ID_FS_UUID)
-			if dev_hw.get_sys_is_mounted():
+			if dev_hw.sys_is_mounted:
 				print("event auto umount " + ID_FS_UUID)
 				dev_hw.exec_umount()
 
