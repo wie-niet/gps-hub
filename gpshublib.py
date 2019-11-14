@@ -202,10 +202,13 @@ class DeviceHardwareRestApi(RestApi):
 	def db_update(self,id,item):
 		# save/update in data layer
 		dev = DeviceHardware(id)
+		
 		# we only have to deal with sys_is_mounted
-		dev.sys_is_mounted = item.sys_is_mounted
+		if hasattr(dev, 'sys_is_mounted') and 'sys_is_mounted' in item:
+			dev.sys_is_mounted = item['sys_is_mounted']
+			
 		# done here, no need to save anything.
-		return(dev)
+		return(DeviceHardware(id))
 
 	def db_find_one(self, id):
 		# find 1 in data layer
