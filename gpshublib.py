@@ -32,8 +32,8 @@ class DeviceHardware:
 
 		return(data)
 		
-	def to_json(self):
-		return(json.dumps(self.get(), indent=4))
+	def to_json(self, *args, **kwargs):
+		return(json.dumps(self.get(), *args, **kwargs))
 
 	def read_udev_list(self, filter_keys=None):
 		context = pyudev.Context()
@@ -122,7 +122,7 @@ class DeviceHardwareList():
 
 		return(data)
 	
-	def to_json(self):
+	def to_json(self,  *args, **kwargs):
 		# empty list
 		result = []
 		
@@ -131,7 +131,7 @@ class DeviceHardwareList():
 			# get item as dict.
 			result.append(item.get())
 			
-		return(json.dumps(result, indent=4))	
+		return(json.dumps(result,  *args, **kwargs))	
 		
 
 	def __getitem__(self, ID_FS_UUID):
