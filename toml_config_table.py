@@ -11,7 +11,7 @@ class GpsConfigCollection(object):
 	toml_file = 'gpsconfig.toml'
 	toml_data = []
 	model_name = 'gps-device-configs'
-	primary_key = 'hwid'
+	primary_key = 'id'
 	
 	def __init__(self):
 		self.file_read()
@@ -77,8 +77,8 @@ class DeviceHardwareRestApi(RestApi):
 		
 	def db_create(self, item):
 		# create in data layer
-		if 'hwid' not in item.keys():
-			return(jsonify('error', 'hwid missing!'))
+		if 'id' not in item.keys():
+			return(jsonify('error', 'id missing!'))
 		
 		# add and save
 		item = self.__conf_list.append(item)
@@ -138,9 +138,9 @@ class DeviceHardwareRestApi(RestApi):
 	#
 	# HTTP Patch
 	#
-	def patch(hwid):
+	def patch(id):
 		# get current data from db
-		data = self.__conf_list.first(hwid)
+		data = self.__conf_list.first(id)
 		if not data:
 			error = {'error': 'not found'}
 			self.response(error, 404)
@@ -164,8 +164,8 @@ class DeviceHardwareRestApi(RestApi):
 		# for k in [x for x in data.keys() if x not in new_data.keys()]:
 		#	 del(data[k])
 
-		# make sure hwid isn't changed:
-		data['hwid'] = hwid
+		# make sure id isn't changed:
+		data['id'] = id
 	
 		# write changes
 		self.__conf_list.file_write()
