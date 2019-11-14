@@ -164,7 +164,8 @@ class DeviceHardwareList():
 				self.udev_device_event(device.action, ID_FS_UUID)
 
 
-
+	
+				
 class DeviceHardwareRestApi(RestApi):
 	def __init__(self, dev_hw_list=None):
 		# set DeviceHardwareList
@@ -173,34 +174,34 @@ class DeviceHardwareRestApi(RestApi):
 
 		self.__dev_hw_list = dev_hw_list
 	
-    #
-    # Datalayer methods for RestApi
-    # 
+	#
+	# Datalayer methods for RestApi
+	# 
 	   
-    # def db_create(self, item):
-    #     # create in data layer
-    #     raise NotImplementedError('implement db_create in your own class')
+	# def db_create(self, item):
+	#	 # create in data layer
+	#	 raise NotImplementedError('implement db_create in your own class')
 
-    def db_update(self,id,item):
-        # save/update in data layer
-        dev = DeviceHardware(ID_FS_UUID)
+	def db_update(self,id,item):
+		# save/update in data layer
+		dev = DeviceHardware(ID_FS_UUID)
 		# we only have to deal with sys_is_mounted
 		dev.sys_is_mounted = item.sys_is_mounted
 		# done here, no need to save anything.
 		return(dev)
 
-    def db_find_one(self, id):
-        # find 1 in data layer
-        return(DeviceHardware(id))
+	def db_find_one(self, id):
+		# find 1 in data layer
+		return(DeviceHardware(id))
 		
-    def db_list(self):
-        # get list from data layer
-        return(self.__dev_hw_list.get())
+	def db_list(self):
+		# get list from data layer
+		return(self.__dev_hw_list.get())
 
-    # def db_delete(self, id):
-    #     # delete from data layer
-    #     raise NotImplementedError('implement db_delete in your own class')
-       
+	# def db_delete(self, id):
+	#	 # delete from data layer
+	#	 raise NotImplementedError('implement db_delete in your own class')
+	   
 
 
 
