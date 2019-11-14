@@ -3,6 +3,7 @@ import stat
 import sh
 import pyudev
 from flask_rest_api import RestApi
+import json
 
 class DeviceHardware:
 	''' device hardware '''
@@ -30,6 +31,9 @@ class DeviceHardware:
 		data['sys_dev_path'] = self.sys_dev_path
 
 		return(data)
+		
+	def to_json(self):
+		return(json.dumps(self.get(), indent=4))
 
 	def read_udev_list(self, filter_keys=None):
 		context = pyudev.Context()
