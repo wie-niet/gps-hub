@@ -18,5 +18,5 @@ app.add_url_rule('/gps_hw/<int:id>', view_func=gps_hw_view, methods=['GET', 'PUT
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host= '0.0.0.0')
     
