@@ -121,6 +121,18 @@ class DeviceHardwareList():
 			if ID_FS_UUID is not None: data.append(DeviceHardware(ID_FS_UUID))
 
 		return(data)
+	
+	def to_json(self):
+		# empty list
+		result = []
+		
+		# itterate over DeviceHardware items 
+		for item in self.get():
+			# get item as dict.
+			result.append(item.get())
+			
+		return(json.dumps(result, indent=4))	
+		
 
 	def __getitem__(self, ID_FS_UUID):
 		return(DeviceHardware(ID_FS_UUID))
