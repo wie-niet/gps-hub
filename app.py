@@ -1,20 +1,36 @@
 from flask import Flask, jsonify, make_response
+
 import gpshublib
+import toml_config_table
+
+
 
 # Creating Flask application
 app = Flask(__name__)
 app.debug = True
 
+# set Cross Origin Resource Sharing 
+from flask_cors import CORS
+CORS(app)
+
 
 #
-# API /user
+# API /gps_hw
 #
-
 gps_hw_view = gpshublib.DeviceHardwareRestApi.as_view('gps_hw_api')
 app.add_url_rule('/gps_hw/', defaults={'id': None}, view_func=gps_hw_view, methods=['GET',])
 app.add_url_rule('/gps_hw/', view_func=gps_hw_view, methods=['POST',])
 app.add_url_rule('/gps_hw/<id>', view_func=gps_hw_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
+
+
+#
+# API /gps_hw
+#
+gps_conf_view = toml_config_table.DeviceHardwareRestApi.as_view('gps_conf_api')
+app.add_url_rule('/gps_conf/', defaults={'id': None}, view_func=gps_conf_view, methods=['GET',])
+app.add_url_rule('/gps_conf/', view_func=gps_conf_view, methods=['POST',])
+app.add_url_rule('/gps_conf/<id>', view_func=gps_conf_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
 
 if __name__ == '__main__':

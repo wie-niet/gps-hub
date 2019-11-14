@@ -29,15 +29,11 @@ class DeviceHardware(ApiItem):
 		data['sys_is_connected'] = self.sys_is_connected
 		data['sys_mountpoint'] = self.sys_mountpoint
 		data['sys_dev_path'] = self.sys_dev_path
-
 		return(data)
 	
 	def to_dict(self):
 		return(self.get())
 		
-	# def to_json(self, *args, **kwargs):
-	# 	return(json.dumps(self.get(), *args, **kwargs))
-
 	def read_udev_list(self, filter_keys=None):
 		context = pyudev.Context()
 		for device in context.list_devices(subsystem='block', ID_FS_UUID=self.ID_FS_UUID):
@@ -113,6 +109,10 @@ class DeviceHardware(ApiItem):
 
 
 class DeviceHardwareList(ApiList):
+	#
+	# Collection DeviceHardwareList
+	#
+	
 	# tmp solution, should be in config
 	_automount_uuids = []
 
@@ -125,22 +125,9 @@ class DeviceHardwareList(ApiList):
 
 		return(data)
 	
-	# def to_list(self):
-	# 	# empty list
-	# 	result = []
-	#
-	# 	# itterate over DeviceHardware items
-	# 	for item in self.get():
-	# 		# get item as dict.
-	# 		result.append(item.get())
-	#
-	# 	return(result)
-	#
-	# def to_json(self,  *args, **kwargs):
-		# return(json.dumps(self.to_list(),  *args, **kwargs))
-		
 
 	def find(self, ID_FS_UUID):
+		'''find DeviceHardware by ID_FS_UUID'''
 		return(DeviceHardware(ID_FS_UUID))
 
 
