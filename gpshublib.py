@@ -2,11 +2,12 @@ import os
 import stat
 import sh
 import pyudev
+from flask_rest_api import RestApi
 
 class DeviceHardware:
 	''' device hardware '''
 	ID_FS_UUID = None
-
+	
 	def __init__(self, ID_FS_UUID):
 		self.ID_FS_UUID = ID_FS_UUID
 
@@ -49,16 +50,17 @@ class DeviceHardware:
 
 	@property
 	def sys_mountpoint(self):
-		mnt_base = '/media/gpshub-'
-		return(mnt_base + str(self.ID_FS_UUID))
+		'''get moutpoint, constructed as '/media/gpshub-' + self.ID_FS_UUID '''
+		return('/media/gpshub-' + str(self.ID_FS_UUID))
 
 	@property
 	def sys_dev_path(self):
+		'''get  /dev/disk/by-uuid/ + self.ID_FS_UUID '''
 		return('/dev/disk/by-uuid/' + str(self.ID_FS_UUID))
 
 	@property
 	def sys_is_connected(self):
-		"""is the device connected, does the dev point exist"""
+		'''is the device connected, does the dev point exist'''
 		try:
 			return stat.S_ISBLK(os.stat(os.path.realpath(self.sys_dev_path)).st_mode)
 		except:
@@ -66,12 +68,17 @@ class DeviceHardware:
 
 	@property
 	def sys_is_mounted(self):
-		"""is the device mounted"""
+		'''is the device mounted'''
 		mount_point = self.sys_mountpoint
 		return(os.path.ismount(mount_point))
 
 	@sys_is_mounted.setter
 	def sys_is_mounted(self, sys_is_mounted):
+		'''set the device mounted status
+		
+		sys_is_mounted = True(mount) / False(umount)
+			
+		'''
 		if(sys_is_mounted == True and self.sys_is_mounted == False):
 			self.exec_mount()
 		if(sys_is_mounted == False and self.sys_is_mounted == True):
@@ -80,7 +87,7 @@ class DeviceHardware:
 		return(self)
 
 	def exec_mount(self):
-		"""mount the device and make mountpoint dir /media/gpshub-.... """
+		'''mount the device and make mountpoint dir /media/gpshub-.... '''
 
 		mount_point = self.sys_mountpoint
 		dev_path = self.sys_dev_path
@@ -90,7 +97,7 @@ class DeviceHardware:
 		sh.mount(dev_path, mount_point)
 
 	def exec_umount(self):
-		"""umount the device and remove mountpoint"""
+		'''umount the device and remove mountpoint. '''
 		mount_point = self.sys_mountpoint
 
 		sh.umount(mount_point)
@@ -98,7 +105,8 @@ class DeviceHardware:
 
 
 
-class DeviceHardwareList:
+class DeviceHardwareList():
+	# tmp solution, should be in config
 	_automount_uuids = []
 
 	def get(self):
@@ -155,23 +163,64 @@ class DeviceHardwareList:
 			if ID_FS_UUID is not None:
 				self.udev_device_event(device.action, ID_FS_UUID)
 
+
+
+class DeviceHardwareRestApi(RestApi):
+	__init__(self, dev_hw_list=None):
+	# set DeviceHardwareList
+	if dev_hw_list is None:
+		dev_hw_list = DeviceHardwareList()
+
+	self.__dev_hw_list = dev_hw_list
+	
+    #
+    # Datalayer methods for RestApi
+    # 
+	   
+    # def db_create(self, item):
+    #     # create in data layer
+    #     raise NotImplementedError('implement db_create in your own class')
+
+    def db_update(self,id,item):
+        # save/update in data layer
+        dev = DeviceHardware(ID_FS_UUID)
+		# we only have to deal with sys_is_mounted
+		dev.sys_is_mounted = item.sys_is_mounted
+		# done here, no need to save anything.
+		return(dev)
+
+    def db_find_one(self, id):
+        # find 1 in data layer
+        return(DeviceHardware(id))
+		
+    def db_list(self):
+        # get list from data layer
+        return(self.__dev_hw_list.get())
+
+    # def db_delete(self, id):
+    #     # delete from data layer
+    #     raise NotImplementedError('implement db_delete in your own class')
+       
+
+
+
 class DeviceConfig:
 	'''Config settings for an GPS device, with functions to read/update/delete'''
-	ID_FS_UUID = None
-
-	def get(self):
-		data = {}
-		data.ID_FS_UUID = self.ID_FS_UUID
-		return(data)
+	# ID_FS_UUID = None
+	#
+	# def get(self):
+	# 	data = {}
+	# 	data.ID_FS_UUID = self.ID_FS_UUID
+	# 	return(data)
 
 class DeviceConfigList:
 	'''List of all config settings in DeviceConfig objects. with functions to read/update/delete/create '''
-	def get(self):
-		''' get list of DeviceConfig objects '''
-		#TODO read config.
-		return([])
-
-	def add(self, device_config):
-		''' add new DeviceConfig objects '''
-		#TODO: addd device_config to list
-		return(device_config)
+	# def get(self):
+	# 	''' get list of DeviceConfig objects '''
+	# 	#TODO read config.
+	# 	return([])
+	#
+	# def add(self, device_config):
+	# 	''' add new DeviceConfig objects '''
+	# 	#TODO: addd device_config to list
+	# 	return(device_config)
