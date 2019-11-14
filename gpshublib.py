@@ -134,7 +134,7 @@ class DeviceHardwareList():
 		return(json.dumps(result,  *args, **kwargs))	
 		
 
-	def __getitem__(self, ID_FS_UUID):
+	def find(self, ID_FS_UUID):
 		return(DeviceHardware(ID_FS_UUID))
 
 
@@ -213,7 +213,7 @@ class DeviceHardwareRestApi(RestApi):
 		
 	def db_list(self):
 		# get list from data layer
-		return(self.__dev_hw_list.get())
+		return(self.__dev_hw_list)
 
 	# def db_delete(self, id):
 	#	 # delete from data layer
