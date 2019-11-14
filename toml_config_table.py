@@ -141,8 +141,8 @@ class DeviceHardwareRestApi(RestApi):
 		# get current data from db
 		data = self.__conf_list.first(hwid)
 		if not data:
-            error = {'error': 'not found'}
-            self.response(error, 404)
+			error = {'error': 'not found'}
+			self.response(error, 404)
 	
 		try:		
 			# patch to apply 
@@ -170,6 +170,6 @@ class DeviceHardwareRestApi(RestApi):
 	self.__conf_list.file_write()
 	
 	# HTTP response
-    self.response(data, 200)
+	self.response(data, 200)
 	
 
