@@ -166,12 +166,12 @@ class DeviceHardwareList():
 
 
 class DeviceHardwareRestApi(RestApi):
-	__init__(self, dev_hw_list=None):
-	# set DeviceHardwareList
-	if dev_hw_list is None:
-		dev_hw_list = DeviceHardwareList()
+	def __init__(self, dev_hw_list=None):
+		# set DeviceHardwareList
+		if dev_hw_list is None:
+			dev_hw_list = DeviceHardwareList()
 
-	self.__dev_hw_list = dev_hw_list
+		self.__dev_hw_list = dev_hw_list
 	
     #
     # Datalayer methods for RestApi
