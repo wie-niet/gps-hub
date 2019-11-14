@@ -201,7 +201,7 @@ class DeviceHardwareRestApi(RestApi):
 
 	def db_update(self,id,item):
 		# save/update in data layer
-		dev = DeviceHardware(ID_FS_UUID)
+		dev = DeviceHardware(id)
 		# we only have to deal with sys_is_mounted
 		dev.sys_is_mounted = item.sys_is_mounted
 		# done here, no need to save anything.
