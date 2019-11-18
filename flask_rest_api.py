@@ -123,7 +123,6 @@ class RestApi(MethodView):
 				# read-only attribute is changed	
 				error = {'error': 'cannot change read-only attribute.', 'path': key}
 				self.response(error, 409)
-		return(result)
 			
 
 	#
