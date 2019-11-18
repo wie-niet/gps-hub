@@ -113,6 +113,7 @@ class RestApi(MethodView):
 		for key in data:
 			if key not in self.write_only_attributes:
 				result[key] = data[key]
+				print("deubg: enforced write-only for attribute", key)
 		
 		return(result)
 			

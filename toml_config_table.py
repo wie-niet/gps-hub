@@ -66,7 +66,7 @@ class GpsConfigCollection(object):
 #
 # RestApi 
 #
-class DeviceConfigRestApi(RestApi, JsonSchemaForRestApi):
+class DeviceConfigRestApi( JsonSchemaForRestApi, RestApi):
 	# our Toml Config List
 	__conf_list = None
 	
