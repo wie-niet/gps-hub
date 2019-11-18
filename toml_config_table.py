@@ -68,8 +68,9 @@ class GpsConfigCollection(object):
 class DeviceConfigRestApi(RestApi):
 	# our Toml Config List
 	__conf_list = None
-	self.need_validation = True
-	self.need_defaults = True
+	
+	need_validation = True
+	need_defaults = True
 		
 	def __init__(self, conf_list=None):
 		# set DeviceHardwareList
