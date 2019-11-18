@@ -88,7 +88,7 @@ class RestApi(MethodView):
 	
 	def is_valid(self, model):
 		# match with self.json_schema
-		if not self.need_validation:
+		if self.need_validation:
 			self.validator(model)
 		
 	def validator(self, model):
@@ -97,7 +97,7 @@ class RestApi(MethodView):
 		
 	def call_set_defaults(self, model):
 		# call set defaults
-		if not self.need_defaults:
+		if self.need_defaults:
 			self.set_defaults(model)
 		
 	def set_defaults(self, model):
