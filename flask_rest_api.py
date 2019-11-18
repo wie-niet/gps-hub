@@ -112,7 +112,7 @@ class RestApi(MethodView):
 		
 		for key in data:
 			if key not in self.write_only_attributes:
-			result[key] = data[key]
+				result[key] = data[key]
 		
 		return(result)
 			
