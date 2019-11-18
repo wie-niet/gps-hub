@@ -5,7 +5,6 @@ import pyudev
 from flask_rest_api import RestApi, ApiItem, ApiList
 import json
 
-from json_schemas import json_schema
 
 class DeviceHardware(ApiItem):
 	''' device hardware '''
