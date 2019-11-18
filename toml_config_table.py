@@ -119,7 +119,7 @@ class DeviceConfigRestApi(RestApi):
 	def db_create(self, item):
 		# create in data layer
 		if 'id' not in item.keys():
-			return(jsonify('error', 'id missing!'))
+			raise Exception('id missing')
 		
 		# add and save
 		item = self.__conf_list.append(item)

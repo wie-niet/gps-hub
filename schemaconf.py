@@ -99,3 +99,11 @@ for schema in raw_json:
 # 	    # print('==== relative_path:' , e.relative_path)
 # 	    # print( '--------------------------------------' )
 #
+def set_defaults(model):
+	# itterate over default values and check if attribute exist in model:
+	for key, propertie in json_schema['gps_conf']['properties'].items():
+		if 'default' in propertie:
+			if key not in model: 
+				# we have a missing attribute:
+				print("debug: set missing key:", key, propertie['default'])
+				model[key] = propertie['default']
