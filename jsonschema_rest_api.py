@@ -79,7 +79,8 @@ class JsonSchemaForRestApi(object):
 
 	#
 	# validation methods
-	def json_schema_validator(self, model):
+	#
+	def validator(self, model):
 		
 		try:
 			validate(instance=model, schema=self.json_schema)
@@ -100,6 +101,7 @@ class JsonSchemaForRestApi(object):
 
 	# 
 	# set defaults
+	#
 	def set_defaults(self, model):
 		
 		# itterate over default values and check if attribute exist in model:
