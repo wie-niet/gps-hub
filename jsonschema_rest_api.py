@@ -57,7 +57,7 @@ class JsonSchemaForRestApi(object):
 			
 		attributes = []
 		for key, propertie in schema_dict['properties'].items():
-			if 'writeOnly' in propertie and propertie['readOnly']:
+			if 'writeOnly' in propertie and propertie['writeOnly']:
 				attributes.append(key)
 		return(attributes)
 
