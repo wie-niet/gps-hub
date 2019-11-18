@@ -237,8 +237,8 @@ class RestApi(MethodView):
 		# get POST data from HTTP request
 		new_item = request.get_json()
 		
-        # check validation (if needed)
-        self.is_valid(new_item)
+		# check validation (if needed)
+		self.is_valid(new_item)
 
 		# check permision to update this item (if needed)
 		self.has_access(auth, 'PUT', new_item)
