@@ -8,7 +8,8 @@ GPS-HUB:
 #### DeviceHardwareList
   - def get()
 #### DeviceHardware
-  - (str) ID_FS_UUID (DeviceConfig.ID_FS_UUID)
+  - (str) id ( uniq id constructed of DeviceHardware.ID_FS_UUID)
+  - (str) ID_FS_UUID 
   - (str) ID_MODEL
   - (str) ID_VENDOR
   - (str) ID_FS_TYPE
@@ -24,8 +25,9 @@ GPS-HUB:
 #### DeviceConfigList
   - def get()
   - def add()
+  
 #### DeviceConfig
-  - (str) ID_FS_UUID (DeviceHardware.ID_FS_UUID)
+  - (str) id (foreign key DeviceHardware.id)
   - (str) name = "My readable name"
   - (str) gpx_dir = "/Garmin/GPX"  -   -   -   -   -   -   -  = find($sys_mountpoint, is_dir, iname='gpx')
   - (bool) gpx_dir_has_archive = 0/1  -   -   -   -   -   -    = find($gpx_dir, is_dir, name='Archive) && 1 || 0
