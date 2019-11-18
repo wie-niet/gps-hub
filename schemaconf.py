@@ -1,6 +1,6 @@
-from jsonschema import validate, ValidationError
+# from jsonschema import validate, ValidationError
 import json
-import jsonschema
+# import jsonschema
 
 # let's put all our schemas in a dict
 raw_json = {}

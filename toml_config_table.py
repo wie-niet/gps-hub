@@ -6,6 +6,7 @@ import jsonpatch
 from flask_rest_api import RestApi, ApiItem, ApiList, request
 
 from jsonschema import validate, ValidationError
+from schemaconf import json_schema
 # import json
 # import jsonschema
 
