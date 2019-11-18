@@ -1,4 +1,5 @@
 from jsonschema import validate, ValidationError
+import json
 
 class JsonSchemaForRestApi(object):
 	'''adds json_schema functionality to your RestApi:
