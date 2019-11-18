@@ -5,6 +5,10 @@ import os
 import jsonpatch
 from flask_rest_api import RestApi, ApiItem, ApiList, request
 
+from jsonschema import validate, ValidationError
+# import json
+# import jsonschema
+
 
 
 class GpsConfigCollection(object):
@@ -70,6 +74,29 @@ class DeviceHardwareRestApi(RestApi):
 			conf_list = GpsConfigCollection()
 
 		self.__conf_list = conf_list
+	
+	#
+	# validation methods
+	#
+	def validator(self, model):
+		try:
+			validate(instance=data, schema=schema)
+		except ValidationError as e:
+			# catches only first error.
+			error = {}
+			error['type'] = 'validation'
+			# pointer '.' or path '/'
+			error['path'] = '.'.join(e.path)
+			error['message'] = e.message
+
+			print( '------validation-error:---------------' )
+			print( 'error: ', json.dumps(error, indent=3))
+			print( '--------------------------------------' )
+
+			# HTTP response
+			self.response(error, 400)
+
+
 	
 	#
 	# Datalayer methods 
