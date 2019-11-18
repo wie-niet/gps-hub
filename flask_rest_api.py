@@ -52,6 +52,7 @@ class RestApi(MethodView):
 	
 	need_auth = bool(False)
 	need_validation = bool(False)
+	need_defaults = bool(False)
 	
 		
 
@@ -83,20 +84,25 @@ class RestApi(MethodView):
 		# method :  GET/PUT/POST/DELETE/PATCH
 		# model : this item 
 		# TODO: implement permision checks && aborts
-		
 		pass
 	
 	def is_valid(self, model):
 		# match with self.json_schema
 		if not self.need_validation:
-			pass
-		
-		self.validator(model)
+			self.validator(model)
 		
 	def validator(self, model):
-		# TODO: implement validation checks && aborts
+		'''implement an validation checks && aborts, don't forget to set need_validation''' 
 		pass
 		
+	def call_set_defaults(self, model):
+		# call set defaults
+		if not self.need_defaults:
+			self.set_defaults(model)
+		
+	def set_defaults(self, model):
+		'''implement an set_defaults to add defaults to the model, don't forget to set need_defaults'''
+		pass
 	
 	#
 	# Datalayer methods 
@@ -206,7 +212,10 @@ class RestApi(MethodView):
 		
 		# get POST data from HTTP request
 		new_item = request.get_json()
-		
+				
+		# add defaults if needed
+		self.call_set_defaults(new_item)
+
 		# check validation (if needed)
 		self.is_valid(new_item)
 			
@@ -236,10 +245,13 @@ class RestApi(MethodView):
 		
 		# get POST data from HTTP request
 		new_item = request.get_json()
-		
+
+		# add defaults if needed
+		self.call_set_defaults(new_item)
+
 		# check validation (if needed)
 		self.is_valid(new_item)
-
+				
 		# check permision to update this item (if needed)
 		self.has_access(auth, 'PUT', new_item)
 

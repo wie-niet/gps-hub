@@ -27,7 +27,7 @@ app.add_url_rule('/gps_dev/<id>', view_func=gps_dev_view, methods=['GET', 'PUT',
 #
 # API /gps_hw
 #
-gps_conf_view = toml_config_table.DeviceHardwareRestApi.as_view('gps_conf_api')
+gps_conf_view = toml_config_table.DeviceConfigRestApi.as_view('gps_conf_api')
 app.add_url_rule('/gps_conf/', defaults={'id': None}, view_func=gps_conf_view, methods=['GET',])
 app.add_url_rule('/gps_conf/', view_func=gps_conf_view, methods=['POST',])
 app.add_url_rule('/gps_conf/<id>', view_func=gps_conf_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])

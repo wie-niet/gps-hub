@@ -65,10 +65,12 @@ class GpsConfigCollection(object):
 #
 # RestApi 
 #
-class DeviceHardwareRestApi(RestApi):
+class DeviceConfigRestApi(RestApi):
 	# our Toml Config List
 	__conf_list = None
-	
+	self.need_validation = True
+	self.need_defaults = True
+		
 	def __init__(self, conf_list=None):
 		# set DeviceHardwareList
 		if conf_list is None:
@@ -97,8 +99,18 @@ class DeviceHardwareRestApi(RestApi):
 			# HTTP response
 			self.response(error, 400)
 
-
-	
+	# 
+	# set defaults
+	#
+	def set_defaults(self, model):
+		# itterate over default values and check if attribute exist in model:
+		for key, propertie in json_schema['gps_conf']['properties'].items():
+			if 'default' in propertie:
+				if key not in model: 
+					# we have a missing attribute:
+					print("debug: set missing key:", key, propertie['default'])
+					model[key] = propertie['default']
+			
 	#
 	# Datalayer methods 
 	#
