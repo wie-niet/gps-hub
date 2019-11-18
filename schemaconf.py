@@ -18,7 +18,6 @@ raw_json['gps_conf'] = '''{
       },
       "label": {
           "description": "client choosen name for the device.",
-		  "default" : "...",
           "type": "string"
       },
       "gpx_dir": {
