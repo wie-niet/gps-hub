@@ -7,7 +7,6 @@
   "properties": {
       "id": {
           "description": "Primary Key to Device Hardware (created from ID_FS_UUID)",
-		  "readOnly": true,
           "type": "string"
       },
       "label": {
@@ -49,12 +48,6 @@
 		  "default" : false,
           "description": "Automaticly mount when detected.",
           "type": "boolean"
-      },
-      "created_at": {
-		  "default" : "datum",
-          "description": "write only test , datum.",
-		  "writeOnly": true,
-          "type": "string"
       }
   }, 
   "required": [ "id" ],
