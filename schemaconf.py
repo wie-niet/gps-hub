@@ -14,6 +14,7 @@ raw_json['gps_conf'] = '''{
   "properties": {
       "id": {
           "description": "Primary Key to Device Hardware (created from ID_FS_UUID)",
+		  "readOnly": true,
           "type": "string"
       },
       "label": {
@@ -106,3 +107,18 @@ def set_defaults(model):
 				# we have a missing attribute:
 				print("debug: set missing key:", key, propertie['default'])
 				model[key] = propertie['default']
+
+
+def get_read_only_attrib_form_schema(schema_dict):
+	attributes = []
+	for key, propertie in schema_dict['properties'].items():
+		if 'readOnly' in propertie and propertie['readOnly']:
+			attributes.append(key)
+	return(attributes)
+
+def get_write_only_attrib_form_schema(schema_dict):
+	attributes = []
+	for key, propertie in schema_dict['properties'].items():
+		if 'writeOnly' in propertie and propertie['readOnly']:
+			attributes.append(key)
+	return(attributes)

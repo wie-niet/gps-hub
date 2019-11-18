@@ -6,7 +6,8 @@ import jsonpatch
 from flask_rest_api import RestApi, ApiItem, ApiList, request
 
 # from jsonschema import validate, ValidationError
-from schemaconf import json_schema
+# from schemaconf import json_schema
+from jsonschema_rest_api import JsonSchemaForRestApi
 # import json
 # import jsonschema
 
@@ -65,7 +66,7 @@ class GpsConfigCollection(object):
 #
 # RestApi 
 #
-class DeviceConfigRestApi(RestApi):
+class DeviceConfigRestApi(RestApi, JsonSchemaForRestApi):
 	# our Toml Config List
 	__conf_list = None
 	

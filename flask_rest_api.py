@@ -1,7 +1,6 @@
 from flask.views import MethodView
 from flask import make_response, jsonify, request, abort
 import json
-from jsonschema import validate, ValidationError
 
 # from orator.exceptions.query import QueryException
 
@@ -49,7 +48,8 @@ class ApiList(object):
 
 
 class RestApi(MethodView):
-	json_schema = ''
+	read_only_attributes = []
+	write_only_attributes = []
 	
 	need_auth = bool(False)
 	need_validation = bool(False)
@@ -94,64 +94,38 @@ class RestApi(MethodView):
 		
 	def validator(self, model):
 		'''implement an validation checks && aborts, don't forget to set need_validation''' 
-		self.json_schema_validator(model)
+		pass
 		
 		
-	def call_set_defaults(self, model):
+	def _call_set_defaults(self, model):
 		# call set defaults
 		if self.need_defaults:
 			self.set_defaults(model)
 		
 	def set_defaults(self, model):
 		'''implement an set_defaults to add defaults to the model, don't forget to set need_defaults'''
-		self.json_schema_set_defaults(model)
-	
-	#
-	# json-schema impementations:
-	#
-
-	#
-	# validation methods
-	def json_schema_validator(self, model):
+		pass
 		
-		try:
-			validate(instance=model, schema=self.json_schema)
-		except ValidationError as e:
-			# catches only first error.
-			error = {}
-			error['type'] = 'validation'
-			# pointer '.' or path '/'
-			error['path'] = '.'.join(e.path)
-			error['message'] = e.message
-
-			print( '------validation-error:---------------' )
-			print( 'error: ', json.dumps(error, indent=3))
-			print( '--------------------------------------' )
-
-			# HTTP response
-			self.response(error, 400)
-
-	# 
-	# set defaults
-	def json_schema_set_defaults(self, model):
+	def enforce_write_only(self, data):
+		'''remove write-only attributes from data, and return new object'''
+		result = {}
 		
-		# itterate over default values and check if attribute exist in model:
-		for key, propertie in self.json_schema['properties'].items():
-			if 'default' in propertie:
-				if key not in model: 
-					# we have a missing attribute:
-					print("debug: set missing key:", key, propertie['default'])
-					model[key] = propertie['default']
+		for key in data:
+			if key not in self.write_only_attributes
+			result[key] = data[key]
+		
+		return(result)
 			
-	#
-	# read-only
-	
-	#
-	# write-only
-	
-	#
-	# set_schema_from_file
-	
+	def enforce_read_only(self, old, new):
+		'''raise error if any of the read-only attributes are changed in new compared with old.'''		
+		for key in self.read_only_attributes:
+			if (old[key] != new[key]):
+				# read-only attribute is changed	
+				error = {'error': 'cannot change read-only attribute.', 'path': key}
+				self.response(error, 409)
+		return(result)
+			
+
 	#
 	# Datalayer methods 
 	#
@@ -240,8 +214,11 @@ class RestApi(MethodView):
 		# check permision for this item (if needed)
 		self.has_access(auth, 'GET', data)
 		
+		# enforce write-only permisions
+		result = self.enforce_write_only(data)
+		
 		# serialize json, http 200
-		self.response(data, 200)
+		self.response(result, 200)
 
 	def get(self, id):
 		if id is None:
@@ -262,7 +239,7 @@ class RestApi(MethodView):
 		new_item = request.get_json()
 				
 		# add defaults if needed
-		self.call_set_defaults(new_item)
+		self._call_set_defaults(new_item)
 
 		# check validation (if needed)
 		self.is_valid(new_item)
@@ -278,9 +255,13 @@ class RestApi(MethodView):
 			error = {'error': 'db error'}
 			print(error,  str(e))
 			self.response(error, 500)
+
+
+		# enforce write-only permisions for response
+		result = self.enforce_write_only(item)
 				
 		# serialize json, http 200
-		self.response(item, 200)
+		self.response(result, 200)
 		
 
 	def put(self, id):
@@ -295,7 +276,7 @@ class RestApi(MethodView):
 		new_item = request.get_json()
 
 		# add defaults if needed
-		self.call_set_defaults(new_item)
+		self._call_set_defaults(new_item)
 
 		# check validation (if needed)
 		self.is_valid(new_item)
@@ -303,18 +284,20 @@ class RestApi(MethodView):
 		# check permision to update this item (if needed)
 		self.has_access(auth, 'PUT', new_item)
 
-		# # get item from data layer
-		# old_item = self.db_find_one(id)
-		#
-		# # 404 not found
-		# if old_item is None:
-		#	 error = {'error': 'not found'}
-		#	 self.response(error, 404)
-		#
+		# get item from data layer
+		old_item = self.db_find_one(id)
+
+		# 404 not found
+		if old_item is None:
+			 error = {'error': 'not found'}
+			 self.response(error, 404)
+
 		# # check permision to update this item (if needed)
 		# self.has_access(auth, 'PUT', old_item)
 
-		# in orator only allowed attributes will be set, 'read-only' attributes will be silenlty ignored.
+		# enforce read-only attributes
+		self.enforce_read_only(old_item, new_item)
+
 		# update item in db layer 
 		try:
 			item = self.db_update(id, new_item)
@@ -322,9 +305,12 @@ class RestApi(MethodView):
 			error = {'error': 'db error'}
 			print(error,  str(e))
 			self.response(error, 500)
+
+		# enforce write-only permisions for response
+		result = self.enforce_write_only(item)
 			
 		# serialize json, http 200
-		self.response(item, 201)
+		self.response(result, 201)
 
 
 	def delete(self, id):
