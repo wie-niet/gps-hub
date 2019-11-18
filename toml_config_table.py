@@ -76,44 +76,48 @@ class DeviceConfigRestApi(RestApi):
 			conf_list = GpsConfigCollection()
 
 		self.__conf_list = conf_list
+		
 		self.need_validation = True
 		self.need_defaults = True
+		self.json_schema = json_schema['gps_conf']
 	
+	# #
+	# # validation methods
+	# #
+	# def validator(self, model):
+	# 	print("debug: running validator...")
+	# 	try:
+	# 		validate(instance=model, schema=json_schema['gps_conf'])
+	# 	except ValidationError as e:
+	# 		# catches only first error.
+	# 		error = {}
+	# 		error['type'] = 'validation'
+	# 		# pointer '.' or path '/'
+	# 		error['path'] = '.'.join(e.path)
+	# 		error['message'] = e.message
 	#
-	# validation methods
+	# 		print( '------validation-error:---------------' )
+	# 		print( 'error: ', json.dumps(error, indent=3))
+	# 		print( '--------------------------------------' )
 	#
-	def validator(self, model):
-		print("debug: running validator...")
-		try:
-			validate(instance=model, schema=json_schema['gps_conf'])
-		except ValidationError as e:
-			# catches only first error.
-			error = {}
-			error['type'] = 'validation'
-			# pointer '.' or path '/'
-			error['path'] = '.'.join(e.path)
-			error['message'] = e.message
-
-			print( '------validation-error:---------------' )
-			print( 'error: ', json.dumps(error, indent=3))
-			print( '--------------------------------------' )
-
-			# HTTP response
-			self.response(error, 400)
-
-	# 
-	# set defaults
+	# 		# HTTP response
+	# 		self.response(error, 400)
 	#
-	def set_defaults(self, model):
-		print("debug: running set_defaults...")
-		# itterate over default values and check if attribute exist in model:
-		for key, propertie in json_schema['gps_conf']['properties'].items():
-			if 'default' in propertie:
-				if key not in model: 
-					# we have a missing attribute:
-					print("debug: set missing key:", key, propertie['default'])
-					model[key] = propertie['default']
-			
+	# #
+	# # set defaults
+	# #
+	# def set_defaults(self, model):
+	# 	print("debug: running set_defaults...")
+	# 	# itterate over default values and check if attribute exist in model:
+	# 	for key, propertie in json_schema['gps_conf']['properties'].items():
+	# 		if 'default' in propertie:
+	# 			if key not in model:
+	# 				# we have a missing attribute:
+	# 				print("debug: set missing key:", key, propertie['default'])
+	# 				model[key] = propertie['default']
+	#
+
+
 	#
 	# Datalayer methods 
 	#

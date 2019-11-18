@@ -93,7 +93,8 @@ class RestApi(MethodView):
 		
 	def validator(self, model):
 		'''implement an validation checks && aborts, don't forget to set need_validation''' 
-		pass
+		self.json_schema_validator(model)
+		
 		
 	def call_set_defaults(self, model):
 		# call set defaults
@@ -102,7 +103,53 @@ class RestApi(MethodView):
 		
 	def set_defaults(self, model):
 		'''implement an set_defaults to add defaults to the model, don't forget to set need_defaults'''
-		pass
+		self.json_schema_set_defaults(model)
+	
+	#
+	# json-schema impementations:
+	#
+
+	#
+	# validation methods
+	def json_schema_validator(self, model):
+		
+		try:
+			validate(instance=model, schema=self.json_schema)
+		except ValidationError as e:
+			# catches only first error.
+			error = {}
+			error['type'] = 'validation'
+			# pointer '.' or path '/'
+			error['path'] = '.'.join(e.path)
+			error['message'] = e.message
+
+			print( '------validation-error:---------------' )
+			print( 'error: ', json.dumps(error, indent=3))
+			print( '--------------------------------------' )
+
+			# HTTP response
+			self.response(error, 400)
+
+	# 
+	# set defaults
+	def json_schema_set_defaults(self, model):
+		
+		# itterate over default values and check if attribute exist in model:
+		for key, propertie in self.json_schema['properties'].items():
+			if 'default' in propertie:
+				if key not in model: 
+					# we have a missing attribute:
+					print("debug: set missing key:", key, propertie['default'])
+					model[key] = propertie['default']
+			
+	#
+	# read-only
+	
+	#
+	# write-only
+	
+	#
+	# set_schema_from_file
 	
 	#
 	# Datalayer methods 
