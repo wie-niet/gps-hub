@@ -69,8 +69,6 @@ class DeviceConfigRestApi(RestApi):
 	# our Toml Config List
 	__conf_list = None
 	
-	need_validation = True
-	need_defaults = True
 		
 	def __init__(self, conf_list=None):
 		# set DeviceHardwareList
@@ -78,11 +76,14 @@ class DeviceConfigRestApi(RestApi):
 			conf_list = GpsConfigCollection()
 
 		self.__conf_list = conf_list
+		self.need_validation = True
+		self.need_defaults = True
 	
 	#
 	# validation methods
 	#
 	def validator(self, model):
+		print("debug: running validator...")
 		try:
 			validate(instance=model, schema=json_schema['gps_conf'])
 		except ValidationError as e:
@@ -104,6 +105,7 @@ class DeviceConfigRestApi(RestApi):
 	# set defaults
 	#
 	def set_defaults(self, model):
+		print("debug: running set_defaults...")
 		# itterate over default values and check if attribute exist in model:
 		for key, propertie in json_schema['gps_conf']['properties'].items():
 			if 'default' in propertie:
