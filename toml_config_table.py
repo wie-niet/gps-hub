@@ -81,7 +81,7 @@ class DeviceHardwareRestApi(RestApi):
 	#
 	def validator(self, model):
 		try:
-			validate(instance=data, schema=schema)
+			validate(instance=model, schema=json_schema['gps_conf'])
 		except ValidationError as e:
 			# catches only first error.
 			error = {}
