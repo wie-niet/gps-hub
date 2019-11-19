@@ -12,6 +12,7 @@ class JsonSchemaForRestApi(object):
 	# set_schema_from_file
 	def _read_json_schema(self, json_schema_file):
 		'''set schema from file '''
+		# print ("debug: read schema file", json_schema_file)
 		with open(json_schema_file) as json_file:
 		    self.json_schema  = json.load(json_file)
 					

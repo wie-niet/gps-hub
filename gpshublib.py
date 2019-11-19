@@ -2,9 +2,9 @@ import os
 import stat
 import sh
 import pyudev
-from flask_rest_api import RestApi, ApiItem, ApiList
+from rest_api_flask import RestApi, ApiItem, ApiList
 import json
-from jsonschema_rest_api import JsonSchemaForRestApi
+from rest_api_jsonschema import JsonSchemaForRestApi
 
 
 class DeviceHardware(ApiItem):

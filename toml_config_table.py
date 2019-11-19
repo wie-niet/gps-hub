@@ -3,11 +3,11 @@ import json
 import toml
 import os
 import jsonpatch
-from flask_rest_api import RestApi, ApiItem, ApiList, request
+from rest_api_flask import RestApi, ApiItem, ApiList, request
 
 # from jsonschema import validate, ValidationError
 # from schemaconf import json_schema
-from jsonschema_rest_api import JsonSchemaForRestApi
+from rest_api_jsonschema import JsonSchemaForRestApi
 # import json
 # import jsonschema
 

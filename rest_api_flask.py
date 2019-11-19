@@ -62,6 +62,9 @@ class RestApi(MethodView):
 	need_enforce_read_only = bool(False)
 	need_enforce_write_only = bool(False)
 	
+	# type casts = {'key': int}
+    # type_casts = {}
+	
 		
 
 	def get_http_auth(self):
@@ -120,7 +123,7 @@ class RestApi(MethodView):
 			
 		result = {}
 		
-		for key in data:
+		for key in self.make_iterable(data):
 			if key not in self.write_only_attributes:
 				result[key] = data[key]
 			else:
@@ -134,8 +137,11 @@ class RestApi(MethodView):
 			return 
 			
 		for key in self.read_only_attributes:
-			if (old[key] != new[key]):
+			# if (old[key] != new[key]):
+			if (self.x_getattr(old, key) != self.x_getattr(new, key) ):
 				# read-only attribute is changed	
+				print ("DEBUG: {} != {}".format(self.x_getattr(old, key), self.x_getattr(new, key) ))
+				print ("DEBUG: {} != {}".format(type(self.x_getattr(old, key)), type(self.x_getattr(new, key)) ))
 				error = {'error': 'cannot change read-only attribute.', 'path': key}
 				self.response(error, 409)
 			
@@ -182,12 +188,82 @@ class RestApi(MethodView):
 		else:
 			# use jsonify 
 			return(jsonify(object))
+
+	def make_iterable(self, object):
+		'''
+		Orator models and collections are not serializable
+		but do have .to_dict(), .items methods we can use.
+		
+		use .to_dict method  if exists.
+		othwerwise we use jsonify()
+		'''
+		
+		try:
+			# test if object is iterable
+			iter(object)
+			# works, so simply return object
+			return(object)
 			
+		except TypeError as te:
+			# ignore Error for now.
+			# we will look for solutions below
+			pass
+		
+		# use .to_dict if exists:
+		if hasattr(object, 'to_dict'):
+			return(object.to_dict())
+	
+
+		# use .items if exists:
+		if hasattr(object, 'items'):
+			return(object.items)
+
+		raise TypeError("object {}, not iterable.".format(str(object)))
+	
+	def x_getattr(self, object, key, default=KeyError):
+		# is it a Dict
+		if isinstance(object, dict):
+			# does it have the key: key
+			if key in object:
+				return(object[key])
+			else:
+				if default is KeyError:
+					raise KeyError(key)
+				else:
+					return default
+		
+		# asume we can use getattr()
+		else:
+			if default is KeyError:
+				return(getattr(object, key))
+			else:
+				return(getattr(object, key, default))
 			
 	def response(self, object, code=200):
 		# short cut for :
 		abort(make_response(self.make_json(object), code))
 		
+	
+	#
+	# type casting attributes
+	#
+	# def cast_attr(self, key, value):
+	# 	''' Replace with your own:
+	# 	cast attribute from json to internal python value.
+	# 	like how the db layer handles it.'''
+	# 	return(value)
+
+	def cast_object(self, object):
+		''' cast dict from json to internal python value. 
+		like how the db layer handles it.
+		'''
+		#
+		# result = {}
+		# for key in object:
+		# 	result[key] = self.cast_attr(key, object[key])
+		# return result
+		return object
+	
 	
 	#
 	# HTTP methods:
@@ -251,7 +327,7 @@ class RestApi(MethodView):
 		
 		# get POST data from HTTP request
 		new_item = request.get_json()
-				
+		
 		# add defaults if needed
 		self._call_set_defaults(new_item)
 
@@ -260,6 +336,13 @@ class RestApi(MethodView):
 			
 		# do we have permision to create THIS item here
 		self.has_access(auth, 'POST', new_item)
+
+		# cast json values to python values
+		new_item = self.cast_object(new_item)
+				
+		# enforce write-only permisions for response
+		result = self.enforce_write_only(item)
+
 		
 		# create item in db layer 
 		try:
@@ -270,9 +353,6 @@ class RestApi(MethodView):
 			print(error)
 			self.response(error, 500)
 
-
-		# enforce write-only permisions for response
-		result = self.enforce_write_only(item)
 				
 		# serialize json, http 200
 		self.response(result, 200)
@@ -288,7 +368,7 @@ class RestApi(MethodView):
 		
 		# get POST data from HTTP request
 		new_item = request.get_json()
-
+		
 		# add defaults if needed
 		self._call_set_defaults(new_item)
 
@@ -309,6 +389,9 @@ class RestApi(MethodView):
 		# # check permision to update this item (if needed)
 		# self.has_access(auth, 'PUT', old_item)
 
+		# cast json values to python values
+		new_item = self.cast_object(new_item)
+		
 		# enforce read-only attributes
 		self.enforce_read_only(old_item, new_item)
 
