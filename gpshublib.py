@@ -24,10 +24,10 @@ class DeviceHardware(ApiItem):
 		#data = self.read_udev_list() # no argument for all udev entries.
 		data = self.read_udev_list([
 			'ID_FS_LABEL', 'ID_MODEL', 'ID_VENDOR', 'ID_FS_TYPE',
-			'ID_FS_USAGE', 'ID_FS_VERSION', 'ID_SERIAL_SHORT'
+			'ID_FS_USAGE', 'ID_FS_VERSION', 'ID_SERIAL_SHORT','ID_FS_UUID'
 			])
 
-		data['ID_FS_UUID'] = self.id
+		data['id'] = self.id
 		data['sys_is_mounted'] = self.sys_is_mounted
 		data['sys_is_connected'] = self.sys_is_connected
 		data['sys_mountpoint'] = self.sys_mountpoint
