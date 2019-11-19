@@ -27,7 +27,7 @@ class DeviceHardware(ApiItem):
 			'ID_FS_USAGE', 'ID_FS_VERSION', 'ID_SERIAL_SHORT'
 			])
 
-		data['ID_FS_UUID'] = self.ID_FS_UUID
+		data['ID_FS_UUID'] = self.id
 		data['sys_is_mounted'] = self.sys_is_mounted
 		data['sys_is_connected'] = self.sys_is_connected
 		data['sys_mountpoint'] = self.sys_mountpoint
