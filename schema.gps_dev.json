@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://wie-niet.nl/gpshub/schema.gps_dev.json",
+  "title": "GPS-HUB Device Hardware",
+  "description": "Object for GPS Device Hardware, like mountpoint, /dev/ path , Filesystem label, some udev entries and to mount/umount the device",
+  "type": "object",
+  "properties": {
+      "id": {
+          "description": "Primary Key to Device Hardware (created from ID_FS_UUID)",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "ID_FS_UUID": {
+          "description": "Filesystem Unique ID",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "ID_FS_LABEL": {
+          "description": "Filesystem Label name",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "ID_VENDOR": {
+          "description": "Device Vendor id",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "ID_FS_TYPE": {
+          "description": "Filesystem type",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "ID_FS_USAGE": {
+          "description": "Filesystem Usage",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "ID_FS_VERSION": {
+          "description": "Filesystem version",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "ID_SERIAL_SHORT": {
+          "description": "ID Serial Short",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "sys_is_mounted": {
+          "description": "Is this Filesystem of the device mounted",
+          "type": "boolean"
+      },
+      "sys_is_connected": {
+          "description": "Is the device contected",
+		  "readOnly": true,
+          "type": "boolean"
+      },
+      "sys_mountpoint": {
+          "description": "mountpoint path",
+		  "readOnly": true,
+          "type": "string"
+      },
+      "sys_dev_path": {
+          "description": "/dev/ path to the block device",
+		  "readOnly": true,
+          "type": "string"          
+      }
+  }, 
+  "required": [ "id", "sys_is_mounted", "sys_is_connected", "sys_mountpoint", "sys_dev_path" ],
+  "additionalProperties": false
+}
