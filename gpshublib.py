@@ -9,10 +9,11 @@ from jsonschema_rest_api import JsonSchemaForRestApi
 
 class DeviceHardware(ApiItem):
 	''' device hardware '''
-	ID_FS_UUID = None
+	id = None
 	
-	def __init__(self, ID_FS_UUID):
-		self.ID_FS_UUID = ID_FS_UUID
+	def __init__(self, id):
+		# self.ID_FS_UUID = ID_FS_UUID
+		self.id = id
 
 	def __str__(self):
 		return str(self.__class__) + ": " + str(self.__dict__)
@@ -38,7 +39,7 @@ class DeviceHardware(ApiItem):
 		
 	def read_udev_list(self, filter_keys=None):
 		context = pyudev.Context()
-		for device in context.list_devices(subsystem='block', ID_FS_UUID=self.ID_FS_UUID):
+		for device in context.list_devices(subsystem='block', ID_FS_UUID=self.id):
 			data = {}
 
 			# either use filter_keys or all keys in device
@@ -55,13 +56,13 @@ class DeviceHardware(ApiItem):
 
 	@property
 	def sys_mountpoint(self):
-		'''get moutpoint, constructed as '/media/gpshub-' + self.ID_FS_UUID '''
-		return('/media/gpshub-' + str(self.ID_FS_UUID))
+		'''get moutpoint, constructed as '/media/gpshub-' + self.id '''
+		return('/media/gpshub-' + str(self.id))
 
 	@property
 	def sys_dev_path(self):
-		'''get  /dev/disk/by-uuid/ + self.ID_FS_UUID '''
-		return('/dev/disk/by-uuid/' + str(self.ID_FS_UUID))
+		'''get  /dev/disk/by-uuid/ + self.id '''
+		return('/dev/disk/by-uuid/' + str(self.id))
 
 	@property
 	def sys_is_connected(self):
@@ -188,6 +189,9 @@ class DeviceHardwareRestApi(JsonSchemaForRestApi, RestApi):
 		
 		self.need_validation = True
 		self.need_defaults = False
+		self.need_enforce_read_only = True
+		self.need_enforce_write_only = False
+		
 		self._read_json_schema('schema.gps_dev.json')
 
 	
@@ -224,24 +228,3 @@ class DeviceHardwareRestApi(JsonSchemaForRestApi, RestApi):
 	   
 
 
-
-class DeviceConfig:
-	'''Config settings for an GPS device, with functions to read/update/delete'''
-	# ID_FS_UUID = None
-	#
-	# def get(self):
-	# 	data = {}
-	# 	data.ID_FS_UUID = self.ID_FS_UUID
-	# 	return(data)
-
-class DeviceConfigList:
-	'''List of all config settings in DeviceConfig objects. with functions to read/update/delete/create '''
-	# def get(self):
-	# 	''' get list of DeviceConfig objects '''
-	# 	#TODO read config.
-	# 	return([])
-	#
-	# def add(self, device_config):
-	# 	''' add new DeviceConfig objects '''
-	# 	#TODO: addd device_config to list
-	# 	return(device_config)

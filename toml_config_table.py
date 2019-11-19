@@ -80,6 +80,9 @@ class DeviceConfigRestApi( JsonSchemaForRestApi, RestApi):
 		
 		self.need_validation = True
 		self.need_defaults = True
+		self.need_enforce_read_only = True
+		self.need_enforce_write_only = True
+		
 		# self.json_schema = json_schema['gps_conf']
 		self._read_json_schema('schema.gps_conf.json')
 	

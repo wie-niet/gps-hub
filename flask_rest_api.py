@@ -54,6 +54,8 @@ class RestApi(MethodView):
 	need_auth = bool(False)
 	need_validation = bool(False)
 	need_defaults = bool(False)
+	need_enforce_read_only = bool(False)
+	need_enforce_write_only = bool(False)
 	
 		
 
@@ -108,6 +110,9 @@ class RestApi(MethodView):
 		
 	def enforce_write_only(self, data):
 		'''remove write-only attributes from data, and return new object'''
+		if not self.need_enforce_write_only:
+			return(data)
+			
 		result = {}
 		
 		for key in data:
@@ -119,7 +124,10 @@ class RestApi(MethodView):
 		return(result)
 			
 	def enforce_read_only(self, old, new):
-		'''raise error if any of the read-only attributes are changed in new compared with old.'''		
+		'''raise error if any of the read-only attributes are changed in new compared with old.'''	
+		if not self.need_enforce_read_only:
+			pass
+			
 		for key in self.read_only_attributes:
 			if (old[key] != new[key]):
 				# read-only attribute is changed	
