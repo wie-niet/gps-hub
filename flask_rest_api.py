@@ -131,7 +131,7 @@ class RestApi(MethodView):
 	def enforce_read_only(self, old, new):
 		'''raise error if any of the read-only attributes are changed in new compared with old.'''	
 		if not self.need_enforce_read_only:
-			pass
+			return 
 			
 		for key in self.read_only_attributes:
 			if (old[key] != new[key]):
