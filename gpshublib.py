@@ -177,13 +177,18 @@ class DeviceHardwareList(ApiList):
 
 from flask_rest_api import RestApi	
 				
-class DeviceHardwareRestApi(RestApi):
+class DeviceHardwareRestApi(JsonSchemaForRestApi, RestApi):
 	def __init__(self, dev_hw_list=None):
 		# set DeviceHardwareList
 		if dev_hw_list is None:
 			dev_hw_list = DeviceHardwareList()
 
 		self.__dev_hw_list = dev_hw_list
+		
+		self.need_validation = True
+		self.need_defaults = False
+		self._read_json_schema('schema.gps_dev.json')
+
 	
 	#
 	# Datalayer methods for RestApi
