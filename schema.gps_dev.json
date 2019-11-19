@@ -40,6 +40,11 @@
 		  "readOnly": true,
           "type": ["string", "null"]
       },
+      "ID_MODEL": {
+          "description": "ID device Model",
+		  "readOnly": true,
+          "type": ["string", "null"]
+      },
       "ID_SERIAL_SHORT": {
           "description": "ID Serial Short",
 		  "readOnly": true,
