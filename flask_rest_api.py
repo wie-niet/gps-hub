@@ -13,6 +13,11 @@ import json
 #
 
 class ApiItem(object):
+	
+    def __getitem__(cls, x):
+		'''make ApiItem subscriptable'''
+        return getattr(cls, x)
+	
 	def to_dict(self):
 		'''Likely you need to replace this method.'''
 		return(self.__dict__)
