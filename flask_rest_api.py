@@ -266,8 +266,8 @@ class RestApi(MethodView):
 			item = self.db_create(new_item)
 
 		except Exception as e:
-			error = {'error': 'db error'}
-			print(error,  str(e))
+			error = {'error': 'db error', 'message': str(e) }
+			print(error)
 			self.response(error, 500)
 
 
@@ -316,8 +316,8 @@ class RestApi(MethodView):
 		try:
 			item = self.db_update(id, new_item)
 		except Exception as e:
-			error = {'error': 'db error'}
-			print(error,  str(e))
+			error = {'error': 'db error', 'message': str(e) }
+			print(error)
 			self.response(error, 500)
 
 		# enforce write-only permisions for response
@@ -340,14 +340,14 @@ class RestApi(MethodView):
 
 				
 		except Exception as e:
-			error = {'error': 'db error'}
-			print(error,  str(e))
+			error = {'error': 'db error', 'message': str(e) }
+			print(error)
 			self.response(error, 500)
 
 		# not found:
 		if result is 0:
 			error = {'error': 'not found'}
-			print (404)
+			print(error)
 			self.response(error, 404)
 			
 		# serialize json, http 204
