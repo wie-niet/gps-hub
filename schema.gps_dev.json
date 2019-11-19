@@ -18,32 +18,32 @@
       "ID_FS_LABEL": {
           "description": "Filesystem Label name",
 		  "readOnly": true,
-          "type": "string"
+          "type": ["string", "null"]
       },
       "ID_VENDOR": {
           "description": "Device Vendor id",
 		  "readOnly": true,
-          "type": "string"
+          "type": ["string", "null"]
       },
       "ID_FS_TYPE": {
           "description": "Filesystem type",
 		  "readOnly": true,
-          "type": "string"
+          "type": ["string", "null"]
       },
       "ID_FS_USAGE": {
           "description": "Filesystem Usage",
 		  "readOnly": true,
-          "type": "string"
+          "type": ["string", "null"]
       },
       "ID_FS_VERSION": {
           "description": "Filesystem version",
 		  "readOnly": true,
-          "type": "string"
+          "type": ["string", "null"]
       },
       "ID_SERIAL_SHORT": {
           "description": "ID Serial Short",
 		  "readOnly": true,
-          "type": "string"
+          "type": ["string", "null"]
       },
       "sys_is_mounted": {
           "description": "Is this Filesystem of the device mounted",
