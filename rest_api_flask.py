@@ -123,7 +123,7 @@ class RestApi(MethodView):
 			
 		result = {}
 		# make sure we have an iterable dict:
-		data = self.make_iterable(obj)
+		data = self.make_dict(obj)
 		
 		for key in data:
 			if key not in self.write_only_attributes:
@@ -191,7 +191,7 @@ class RestApi(MethodView):
 			# use jsonify 
 			return(jsonify(object))
 
-	def make_iterable(self, object):
+	def make_dict(self, object):
 		'''
 		Orator models and collections are not serializable
 		but do have .to_dict(), .items methods we can use.
@@ -204,7 +204,7 @@ class RestApi(MethodView):
 			# test if object is iterable
 			iter(object)
 			# works, so simply return object
-			print("DEBUG: make_iterable: object")
+			print("DEBUG: make_dict: object")
 			return(object)
 			
 		except TypeError as te:
@@ -212,18 +212,12 @@ class RestApi(MethodView):
 			# we will look for solutions below
 			pass
 		
-		# use .to_dict if exists:
+		# use .to_dict if exists (Orator):
 		if hasattr(object, 'to_dict'):
-			print("DEBUG: make_iterable: to_dict()")
+			print("DEBUG: make_dict: to_dict()")
 			return(object.to_dict())
 	
-
-		# use .items if exists:
-		if hasattr(object, 'items'):
-			print("DEBUG: make_iterable: items")
-			return(object.items)
-
-		raise TypeError("object {}, not iterable.".format(str(object)))
+		raise TypeError("object {}, don't know how to make dict of it.".format(str(object)))
 	
 	def x_getattr(self, object, key, default=KeyError):
 		# is it a Dict
