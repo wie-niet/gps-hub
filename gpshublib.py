@@ -177,7 +177,7 @@ class DeviceHardwareList(ApiList):
 
 
 
-from flask_rest_api import RestApi	
+from rest_api_flask import RestApi	
 				
 class DeviceHardwareRestApi(JsonSchemaForRestApi, RestApi):
 	def __init__(self, dev_hw_list=None):
