@@ -116,18 +116,20 @@ class RestApi(MethodView):
 		'''implement an set_defaults to add defaults to the model, don't forget to set need_defaults'''
 		pass
 		
-	def enforce_write_only(self, data):
+	def enforce_write_only(self, obj):
 		'''remove write-only attributes from data, and return new object'''
 		if not self.need_enforce_write_only:
 			return(data)
 			
 		result = {}
+		# make sure we have an iterable dict:
+		data = self.make_iterable(obj)
 		
-		for key in self.make_iterable(data):
+		for key in data:
 			if key not in self.write_only_attributes:
 				result[key] = data[key]
 			else:
-				print("deubg: enforced write-only for attribute", key)
+				print("DEBUG: enforced write-only for attribute", key)
 		
 		return(result)
 			
@@ -202,6 +204,7 @@ class RestApi(MethodView):
 			# test if object is iterable
 			iter(object)
 			# works, so simply return object
+			print("DEBUG: make_iterable: object")
 			return(object)
 			
 		except TypeError as te:
@@ -211,11 +214,13 @@ class RestApi(MethodView):
 		
 		# use .to_dict if exists:
 		if hasattr(object, 'to_dict'):
+			print("DEBUG: make_iterable: to_dict()")
 			return(object.to_dict())
 	
 
 		# use .items if exists:
 		if hasattr(object, 'items'):
+			print("DEBUG: make_iterable: items")
 			return(object.items)
 
 		raise TypeError("object {}, not iterable.".format(str(object)))
