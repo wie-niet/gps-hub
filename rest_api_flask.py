@@ -200,24 +200,19 @@ class RestApi(MethodView):
 		othwerwise we use jsonify()
 		'''
 		
-		try:
-			# test if object is iterable
-			iter(object)
-			# works, so simply return object
-			print("DEBUG: make_dict: object")
+		# it's a dict:
+		if isinstance(object, dict):
+			print("DEBUG: it's already dict")
 			return(object)
-			
-		except TypeError as te:
-			# ignore Error for now.
-			# we will look for solutions below
-			pass
 		
 		# use .to_dict if exists (Orator):
 		if hasattr(object, 'to_dict'):
 			print("DEBUG: make_dict: to_dict()")
 			return(object.to_dict())
-	
+
+		# we have no solution for this object:
 		raise TypeError("object {}, don't know how to make dict of it.".format(str(object)))
+
 	
 	def x_getattr(self, object, key, default=KeyError):
 		# is it a Dict
