@@ -203,7 +203,7 @@ class DeviceHardwareRestApi(JsonSchemaForRestApi, RestApi):
 	#	 # create in data layer
 	#	 raise NotImplementedError('implement db_create in your own class')
 
-	def db_update(self,id,item):
+	def db_update(self,id,item, old_data=None):
 		# save/update in data layer
 		dev = DeviceHardware(id)
 		
