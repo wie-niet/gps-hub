@@ -119,7 +119,7 @@ class RestApi(MethodView):
 	def enforce_write_only(self, obj):
 		'''remove write-only attributes from data, and return new object'''
 		if not self.need_enforce_write_only:
-			return(data)
+			return(obj)
 			
 		result = {}
 		# make sure we have an iterable dict:
@@ -202,12 +202,12 @@ class RestApi(MethodView):
 		
 		# it's a dict:
 		if isinstance(object, dict):
-			print("DEBUG: it's already dict")
+			# print("DEBUG: it's already dict")
 			return(object)
 		
 		# use .to_dict if exists (Orator):
 		if hasattr(object, 'to_dict'):
-			print("DEBUG: make_dict: to_dict()")
+			# print("DEBUG: make_dict: to_dict()")
 			return(object.to_dict())
 
 		# we have no solution for this object:
@@ -232,10 +232,12 @@ class RestApi(MethodView):
 				return(getattr(object, key))
 			else:
 				return(getattr(object, key, default))
-			
+		
+		
 	def response(self, object, code=200):
+		'''make json HTTP response of "object" with status "code" (default: 200) '''
 		# short cut for :
-		abort(make_response(self.make_json(object), code))
+		abort(make_response(self.make_json(object), code, {'Content-Type': 'application/json'}))
 		
 	
 	#
@@ -260,9 +262,27 @@ class RestApi(MethodView):
 	
 	
 	#
+	# HTTP routing to objects
+	#
+	def magic_parse_route(self, **kwargs):
+		'''method is called by GET/PUT/POST/DELETE/PATCH. you can use it to set the envirement 
+		to set it up for any nested/related object.  
+		
+		for example: 
+		## ROUTE : /users/<int:user_id>/posts/<int:id> [...]
+		# def magic_parse_route(self, **kwargs):
+		# 	user_id = kwargs.get('user_id')
+		# 	self._orator_model = User.find_or_fail(user_id).posts()
+		
+		'''
+		# nothing_id = args['nothing_id']
+		# self._orator_model = User.find_or_fail(nothing_id).rfidtags()
+		# print("magic_parse_route: ", kwargs)
+		pass
+	#
 	# HTTP methods:
 	#
-	
+			
 	def get_list(self):
 		'''GET  : Read collection'''
 		
@@ -272,7 +292,7 @@ class RestApi(MethodView):
 		# check permision (if needed)
 		self.has_access(auth, 'GET')
 		
-		# get item from data layer
+		# get items from data layer
 		data = self.db_list()
 
 		# serialize json, http 200
@@ -304,15 +324,21 @@ class RestApi(MethodView):
 		# serialize json, http 200
 		self.response(result, 200)
 
-	def get(self, id):
+	def get(self, id, **kwargs):
+		self.magic_parse_route(**kwargs)
+		
 		if id is None:
 			return self.get_list()
 		else:
 			return self.get_item(id)
 			
 		
-	def post(self):
+	def post(self, **kwargs):
 		'''POST : Create single item'''
+		
+		# set env for nested/related objects
+		self.magic_parse_route(**kwargs)
+
 		# get auth header (if needed)
 		auth = self.get_http_auth()
 		
@@ -334,9 +360,6 @@ class RestApi(MethodView):
 		# cast json values to python values
 		new_item = self.cast_object(new_item)
 				
-		# enforce write-only permisions for response
-		result = self.enforce_write_only(item)
-
 		
 		# create item in db layer 
 		try:
@@ -347,13 +370,20 @@ class RestApi(MethodView):
 			print(error)
 			self.response(error, 500)
 
-				
+		# enforce write-only permisions for response
+		result = self.enforce_write_only(item)
+		
+		print("DEBUG: item", item, result)
+
 		# serialize json, http 200
 		self.response(result, 200)
 		
 
-	def put(self, id):
-		'''PUT  : Update single item'''
+	def put(self, id, **kwargs):
+		'''PUT  : Update single item'''		
+		# set env for nested/related objects
+		self.magic_parse_route(**kwargs)
+
 		# get auth header (if needed)
 		auth = self.get_http_auth()
 		
@@ -384,17 +414,24 @@ class RestApi(MethodView):
 		# self.has_access(auth, 'PUT', old_item)
 
 		# cast json values to python values
-		new_item = self.cast_object(new_item)
+		new_item = self.cast_object(new_item, old_item)
+		# some how cast_object corrupts db_find_one... for orator
+		# print("DEBUG old_item:" ,  self.db_find_one(id))
+		
 		
 		# enforce read-only attributes
 		self.enforce_read_only(old_item, new_item)
 
+
+		# # orator only test:
+		# old_item.update(new_item)
 		# update item in db layer 
 		try:
-			item = self.db_update(id, new_item)
+			item = self.db_update(id, new_item, old_item)
 		except Exception as e:
 			error = {'error': 'db error', 'message': str(e) }
 			print(error)
+			raise(e)
 			self.response(error, 500)
 
 		# enforce write-only permisions for response
@@ -404,8 +441,11 @@ class RestApi(MethodView):
 		self.response(result, 201)
 
 
-	def delete(self, id):
-		'''DELETE : Delete single item'''
+	def delete(self, id, **kwargs):
+		'''DELETE : Delete single item'''		
+		# set env for nested/related objects
+		self.magic_parse_route(**kwargs)
+
 		# get auth header (if needed)
 		auth = self.get_http_auth()
 		
@@ -431,7 +471,7 @@ class RestApi(MethodView):
 		self.response(None, 204)
 		
 
-	def patch(self, id):
+	def patch(self, id, **kwargs):
 		'''PATCH : update single item using jsonpatch'''
 		return('Patch not implemented..')
 
