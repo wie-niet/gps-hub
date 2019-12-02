@@ -140,7 +140,7 @@ class DeviceConfigRestApi( JsonSchemaForRestApi, RestApi):
 		return(item)
 		
 		
-	def db_update(self,id,n_data):
+	def db_update(self, id, n_data, old_data=None):
 		# save/update in data layer
 		data = self.__conf_list.first(id)
 
