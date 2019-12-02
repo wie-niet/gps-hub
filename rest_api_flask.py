@@ -249,7 +249,7 @@ class RestApi(MethodView):
 	# 	like how the db layer handles it.'''
 	# 	return(value)
 
-	def cast_object(self, object):
+	def cast_object(self, object, instance=None):
 		''' cast dict from json to internal python value. 
 		like how the db layer handles it.
 		'''
