@@ -65,6 +65,42 @@ class RestApi(MethodView):
 	# type casts = {'key': int}
     # type_casts = {}
 	
+	@classmethod
+	def flask_add_rules(cls, uri_path, flask_app,  uri_path_id='<int:id>', pk='id', methods=['LIST','POST','GET', 'PUT', 'DELETE', 'PATCH']):
+		'''add HTTP end_points for this RestApi class:
+			class MyUsersRestApi(...,RestApi):
+				...
+		
+			MyUsersRestApi.flask_add_rules('/users/', app)
+		
+			will add:
+			# we use method 'LIST' to define the GET method to list all entries:
+			app.route('/users/', methods=['GET']):
+		
+			# POST / create
+			app.route('/users/', methods=['POST']):
+		
+			# GET, PUT, DELETE, PATCH (read, update, delete ...)
+			app.route('/users/<int:id>', methods= [....]):
+		
+		'''
+		# view class name 'as_view' => api_rest_ + uri_path (translate special chars?).
+		view_class_name = 'api_rest_view_' + uri_path
+		
+		view_instance = cls.as_view(view_class_name)
+
+		if 'LIST' in methods:
+			flask_app.add_url_rule(uri_path, defaults={pk: None}, view_func=view_instance, methods=['GET',])
+			methods.remove('LIST')
+			
+		if 'POST' in methods:
+			flask_app.add_url_rule(uri_path, view_func=view_instance, methods=['POST',])
+			methods.remove('POST')
+
+		# the rest of the methods ['GET', 'PUT', 'DELETE', 'PATCH']]
+		if len(methods) != 0:
+			flask_app.add_url_rule(uri_path+uri_path_id, view_func=view_instance, methods=methods)
+		
 		
 
 	def get_http_auth(self):
