@@ -89,17 +89,25 @@ class RestApi(MethodView):
 		
 		view_instance = cls.as_view(view_class_name)
 
-		if 'LIST' in methods:
+		print('DEBUG: flask_add_rules: ', methods, uri_path)
+
+		# copy methods to prevent updating the static value of this method
+		my_methods = methods.copy()
+		
+		if 'LIST' in my_methods:
 			flask_app.add_url_rule(uri_path, defaults={pk: None}, view_func=view_instance, methods=['GET',])
-			methods.remove('LIST')
+			my_methods.remove('LIST')
+			# print('DEBUG: add_url_rule LIST:', uri_path)
 			
 		if 'POST' in methods:
 			flask_app.add_url_rule(uri_path, view_func=view_instance, methods=['POST',])
-			methods.remove('POST')
+			my_methods.remove('POST')
+			# print('DEBUG: add_url_rule POST:', uri_path)
 
 		# the rest of the methods ['GET', 'PUT', 'DELETE', 'PATCH']]
-		if len(methods) != 0:
-			flask_app.add_url_rule(uri_path+uri_path_id, view_func=view_instance, methods=methods)
+		if len(my_methods) != 0:
+			flask_app.add_url_rule(uri_path+uri_path_id, view_func=view_instance, methods=my_methods)
+			# print('DEBUG: add_url_rule ', my_methods , uri_path)
 		
 		
 
