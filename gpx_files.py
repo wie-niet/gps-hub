@@ -16,9 +16,20 @@ class GpxFile(ApiItem):
 # RestApi 
 #
 class GpxFilesRestApi( JsonSchemaForRestApi, RestApi):
+	__ds = {}
 	
-	def __init__(self, data_store):
-		self.ds  = data_store
+	def __init__(self, dev_hw_list=None,conf_list=None ):
+		
+		# set DeviceHardwareList
+		if dev_hw_list is None:
+			self.__ds['dev_hw_list'] = DeviceHardwareList()
+			
+		# set DeviceConfigList
+		if conf_list is None:
+			self.__ds['conf_list'] = GpsConfigCollection()
+
+		
+		
 
 	def magic_parse_route(self, **kwargs):
 		## ROUTE : /gps/<string:gps_id>/files/<string:id> 
@@ -30,10 +41,10 @@ class GpxFilesRestApi( JsonSchemaForRestApi, RestApi):
 		gps_id = self.gps_id
 		
 		# get GPS config dict
-		gps_conf = self.ds['conf_list'].first(gps_id)
+		gps_conf = self.__ds['conf_list'].first(gps_id)
 
 		# get gpshublib.DeviceHardware object (for is_mounted) 
-		gps_hw = self.ds['dev_hw_list'].find(gps_id)
+		gps_hw = self.__ds['dev_hw_list'].find(gps_id)
 		
 		# check if gps device is mounted
 		if not gps_hw.sys_is_mounted:

@@ -2,6 +2,7 @@ from flask import Flask, jsonify, make_response
 
 import gpshublib
 import toml_config_table
+import gpx_files
 
 # global data stores
 ds = {}
@@ -37,13 +38,13 @@ app.add_url_rule('/gps_conf/', defaults={'id': None}, view_func=gps_conf_view, m
 app.add_url_rule('/gps_conf/', view_func=gps_conf_view, methods=['POST',])
 app.add_url_rule('/gps_conf/<id>', view_func=gps_conf_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
-# #
-# # GPX files meta data /gps/<id>/files/
-# #
-# gpx_files_view = *******.DeviceConfigRestApi.as_view('gpx_files_api')
-# app.add_url_rule('/gps/<gps_id>/files/', defaults={'id': None}, view_func=gpx_files_view, methods=['GET',])
-# # app.add_url_rule('/gps/<gps_id>/files/', view_func=gpx_files_view, methods=['POST',])
-# app.add_url_rule('/gps/<gps_id>/files/<id>', view_func=gpx_files_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
+#
+# GPX files meta data /gps/<id>/files/
+#
+gpx_files_view = gpx_files.GpxFilesRestApi(conf_list=ds['conf_list'], dev_hw_list=ds['dev_hw_list']).as_view('gpx_files_api')
+app.add_url_rule('/gps/<gps_id>/files/', defaults={'id': None}, view_func=gpx_files_view, methods=['GET',])
+# app.add_url_rule('/gps/<gps_id>/files/', view_func=gpx_files_view, methods=['POST',])
+app.add_url_rule('/gps/<gps_id>/files/<id>', view_func=gpx_files_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
 #
 # GPX files meta data /gps/<id>/files_data/
