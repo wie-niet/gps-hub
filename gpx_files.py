@@ -16,20 +16,20 @@ class GpxFile(ApiItem):
 # RestApi 
 #
 class GpxFilesRestApi( JsonSchemaForRestApi, RestApi):
-	__ds = {}
+	ds = {}
 	
 	def __init__(self, ds={} ):
-		self.__ds = ds
-		print ("DEBUG ds:", self.__ds)
+		self.ds = ds
+		print ("DEBUG ds:", self.ds)
 		# set DeviceHardwareList
 		# if dev_hw_list is None:
-		# 	self.__ds['dev_hw_list'] = DeviceHardwareList()
-		# self.__ds['dev_hw_list'] = dev_hw_list
+		# 	self.ds['dev_hw_list'] = DeviceHardwareList()
+		# self.ds['dev_hw_list'] = dev_hw_list
 			
 		# set DeviceConfigList
 		# if conf_list is None:
-		# 	self.__ds['conf_list'] = GpsConfigCollection()
-		# self.__ds['conf_list'] = conf_list
+		# 	self.ds['conf_list'] = GpsConfigCollection()
+		# self.ds['conf_list'] = conf_list
 
 		
 		
@@ -44,10 +44,10 @@ class GpxFilesRestApi( JsonSchemaForRestApi, RestApi):
 		gps_id = self.gps_id
 		
 		# get GPS config dict
-		gps_conf = self.__ds['conf_list'].first(gps_id)
+		gps_conf = self.ds['conf_list'].first(gps_id)
 
 		# get gpshublib.DeviceHardware object (for is_mounted) 
-		gps_hw = self.__ds['dev_hw_list'].find(gps_id)
+		gps_hw = self.ds['dev_hw_list'].find(gps_id)
 		
 		# check if gps device is mounted
 		if not gps_hw.sys_is_mounted:
