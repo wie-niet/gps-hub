@@ -20,7 +20,7 @@ class GpxFilesRestApi( JsonSchemaForRestApi, RestApi):
 	
 	def __init__(self, ds={} ):
 		self.__ds = ds
-		print ("DEBUG ds:", ds)
+		print ("DEBUG ds:", self.__ds)
 		# set DeviceHardwareList
 		# if dev_hw_list is None:
 		# 	self.__ds['dev_hw_list'] = DeviceHardwareList()
