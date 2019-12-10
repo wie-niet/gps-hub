@@ -21,12 +21,14 @@ class GpxFilesRestApi( JsonSchemaForRestApi, RestApi):
 	def __init__(self, dev_hw_list=None,conf_list=None ):
 		
 		# set DeviceHardwareList
-		if dev_hw_list is None:
-			self.__ds['dev_hw_list'] = DeviceHardwareList()
+		# if dev_hw_list is None:
+		# 	self.__ds['dev_hw_list'] = DeviceHardwareList()
+		self.__ds['dev_hw_list'] = dev_hw_list
 			
 		# set DeviceConfigList
-		if conf_list is None:
-			self.__ds['conf_list'] = GpsConfigCollection()
+		# if conf_list is None:
+		# 	self.__ds['conf_list'] = GpsConfigCollection()
+		self.__ds['conf_list'] = conf_list
 
 		
 		
