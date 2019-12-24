@@ -20,7 +20,7 @@ class ApiItem(object):
 	
 	def to_dict(self):
 		'''Likely you need to replace this method.'''
-		return(self.__dict__)
+		return(self.get())
 
 	def to_json(self, *args, **kwargs):
 		'''json dumps this object.
@@ -28,7 +28,7 @@ class ApiItem(object):
 		it calls self.to_dict() to get all attributes.
 		replace the to_dict(self) method in your own class.
 		'''
-		return(json.dumps(self.get(), *args, **kwargs))
+		return(json.dumps(self.to_dict(), *args, **kwargs))
 
 
 class ApiList(object):
@@ -219,7 +219,7 @@ class RestApi(MethodView):
 	#
 	# helper functions
 	# 
-	def make_json(self, object):
+	def make_json(self, obj):
 		'''
 		Orator models and collections are not serializable
 		but do have .to_json methods we can use.
@@ -227,15 +227,22 @@ class RestApi(MethodView):
 		use .to_json() method  if exists.
 		othwerwise we use jsonify()
 		'''
+		# if it's a list , go into each item and call make_dict(item):
+		if isinstance(obj, list):
+			result = []
+			# itterate list and call make_dict for each item
+			for i in obj:
+				result.append(self.make_dict(i))
+			return(jsonify(result))
+		
 		# use .to_json if exists:
-		if hasattr(object, 'to_json'):
-			return(object.to_json(indent=4))
-	
+		if hasattr(obj, 'to_json'):
+			return(obj.to_json(indent=4))
 		else:
 			# use jsonify 
-			return(jsonify(object))
+			return(jsonify(obj))
 
-	def make_dict(self, object):
+	def make_dict(self, obj):
 		'''
 		Orator models and collections are not serializable
 		but do have .to_dict(), .items methods we can use.
@@ -245,25 +252,25 @@ class RestApi(MethodView):
 		'''
 		
 		# it's a dict:
-		if isinstance(object, dict):
+		if isinstance(obj, dict):
 			# print("DEBUG: it's already dict")
-			return(object)
+			return(obj)
 		
 		# use .to_dict if exists (Orator):
-		if hasattr(object, 'to_dict'):
+		if hasattr(obj, 'to_dict'):
 			# print("DEBUG: make_dict: to_dict()")
-			return(object.to_dict())
+			return(obj.to_dict())
 
 		# we have no solution for this object:
-		raise TypeError("object {}, don't know how to make dict of it.".format(str(object)))
+		raise TypeError("object {}, don't know how to make dict of it.".format(str(obj)))
 
 	
-	def x_getattr(self, object, key, default=KeyError):
+	def x_getattr(self, obj, key, default=KeyError):
 		# is it a Dict
-		if isinstance(object, dict):
+		if isinstance(obj, dict):
 			# does it have the key: key
-			if key in object:
-				return(object[key])
+			if key in obj:
+				return(obj[key])
 			else:
 				if default is KeyError:
 					raise KeyError(key)
@@ -273,15 +280,15 @@ class RestApi(MethodView):
 		# asume we can use getattr()
 		else:
 			if default is KeyError:
-				return(getattr(object, key))
+				return(getattr(obj, key))
 			else:
-				return(getattr(object, key, default))
+				return(getattr(obj, key, default))
 		
 		
-	def response(self, object, code=200):
+	def response(self, obj, code=200):
 		'''make json HTTP response of "object" with status "code" (default: 200) '''
 		# short cut for :
-		abort(make_response(self.make_json(object), code, {'Content-Type': 'application/json'}))
+		abort(make_response(self.make_json(obj), code, {'Content-Type': 'application/json'}))
 		
 	
 	#
@@ -293,16 +300,16 @@ class RestApi(MethodView):
 	# 	like how the db layer handles it.'''
 	# 	return(value)
 
-	def cast_object(self, object, instance=None):
+	def cast_object(self, obj, instance=None):
 		''' cast dict from json to internal python value. 
 		like how the db layer handles it.
 		'''
 		#
 		# result = {}
-		# for key in object:
-		# 	result[key] = self.cast_attr(key, object[key])
+		# for key in obj:
+		# 	result[key] = self.cast_attr(key, obj[key])
 		# return result
-		return object
+		return obj
 	
 	
 	#
@@ -475,7 +482,8 @@ class RestApi(MethodView):
 		except Exception as e:
 			error = {'error': 'db error', 'message': str(e) }
 			print(error)
-			raise(e)
+			# display error / debug : raise(e)
+			# raise(e)
 			self.response(error, 500)
 
 		# enforce write-only permisions for response

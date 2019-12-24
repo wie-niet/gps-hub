@@ -98,8 +98,12 @@ class DeviceHardware(ApiItem):
 		mount_point = self.sys_mountpoint
 		dev_path = self.sys_dev_path
 
+		if not self.sys_is_connected:
+			raise Exception('Cannot mount device: device not connected.')
+
 		if not os.path.isdir(mount_point):
 			os.makedirs(mount_point)
+				
 		sh.mount(dev_path, mount_point)
 
 	def exec_umount(self):
@@ -150,7 +154,7 @@ class DeviceHardwareList(ApiList):
 		if ID_FS_UUID in self._automount_uuids:
 			dev_hw = DeviceHardware(ID_FS_UUID)
 			print("event automount " + ID_FS_UUID)
-			dev_hw.sys_is_mounted = 1
+			dev_hw.sys_is_mounted = True
 
 	def udev_device_event_remove(self, ID_FS_UUID):
 		'''Auto umount when still mounted after hardware is detached.'''
