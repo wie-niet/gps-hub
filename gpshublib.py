@@ -229,6 +229,5 @@ class DeviceHardwareRestApi(JsonSchemaForRestApi, RestApi):
 	# def db_delete(self, id):
 	#	 # delete from data layer
 	#	 raise NotImplementedError('implement db_delete in your own class')
-	   
 
 

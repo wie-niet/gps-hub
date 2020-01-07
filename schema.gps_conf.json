@@ -11,19 +11,25 @@
       },
       "label": {
           "description": "client choosen name for the device.",
+		  "default": "",
           "type": "string"
+      },
+      "has_gpx_dir": {
+          "description": "True if gpx_dir exists.",
+		  "default" : true,
+          "type": "boolean"
       },
       "gpx_dir": {
           "description": "path to GPX dir (relative to mount_point)",
 		  "default" : "Garmin/GPX",
           "type": "string"
       },
-      "gpx_dir_has_archive": {
+      "has_gpx_archive_dir": {
           "description": "True if gpx_dir has an sub-directory what is used as archive folder.",
 		  "default" : false,
           "type": "boolean"
       },
-      "gpx_dir_archive": {
+      "gpx_archive_dir": {
           "description": "path to archive dir , relative to mount_point",
 		  "default" : "Garmin/GPX/Archive",
           "type": "string"
@@ -47,6 +53,8 @@
       "auto_mount": {
 		  "default" : false,
           "description": "Automaticly mount when detected.",
+		  "readOnly": true,
+		  
           "type": "boolean"
       }
   }, 

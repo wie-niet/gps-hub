@@ -5,6 +5,7 @@ import os
 import jsonpatch
 from rest_api_flask import RestApi, ApiItem, ApiList, request
 
+
 # from jsonschema import validate, ValidationError
 # from schemaconf import json_schema
 from rest_api_jsonschema import JsonSchemaForRestApi
@@ -24,7 +25,9 @@ class GpsConfigCollection(object):
 	
 	def file_read(self):
 		tdata = toml.load(self.toml_file)
-		self.toml_data = tdata[self.model_name]
+
+		if self.model_name in tdata:
+			self.toml_data = tdata[self.model_name]
 		
 	def file_write(self):
 		f = open(self.toml_file + '.tmp', "w")
@@ -38,13 +41,21 @@ class GpsConfigCollection(object):
 	def all(self):
 		return(self.toml_data)
 		
-	def first(self, value):
+	def first(self, value, or_append=False):
 		key = self.primary_key
 		
 		for i in self.toml_data:
 			if key in i:
 				if i[key] == value:
 					return i
+
+		# if not found and or_append = True
+		if or_append:
+			item = { key: value }
+			item = self.append(item)
+			return(item)
+			
+			
 	
 	def append(self, item):
 		self.toml_data.append(item)
@@ -142,20 +153,20 @@ class DeviceConfigRestApi( JsonSchemaForRestApi, RestApi):
 		
 	def db_update(self, id, n_data, old_data=None):
 		# save/update in data layer
-		data = self.__conf_list.first(id)
+		data = self.__conf_list.first(id, or_append=True)
 
 		# print()
 		# print("DEBUG:", type(request.get_json()), request.get_json())
 		for k in n_data.keys():
-			data[k] = n_data[k]
+				data[k] = n_data[k]
 
 		for k in [x for x in data.keys() if x not in n_data.keys()]:
-			del(data[k])
+				del(data[k])
 
 		# make sure id isn't changed:
 		id_name = self.__conf_list.primary_key
 		data[id_name] = id
-		
+
 		#save changes
 		self.__conf_list.file_write()
 		
@@ -165,7 +176,18 @@ class DeviceConfigRestApi( JsonSchemaForRestApi, RestApi):
 
 	def db_find_one(self, id):
 		# find 1 in data layer
-		return(self.__conf_list.first(id))
+		# return(self.__conf_list.first(id))		
+
+		# try to fetch one object
+		result = self.__conf_list.first(id)
+
+		# if not found
+		if result is None:
+			# construct a empty dict:
+			result = {'id': id}
+			self._call_set_defaults(result)
+		
+		return(result)
 
 	def db_list(self):
 		# get list from data layer

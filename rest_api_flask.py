@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask import make_response, jsonify, request, abort
+from flask import make_response, jsonify, request, abort, redirect
 import json
 
 # from orator.exceptions.query import QueryException
@@ -127,7 +127,7 @@ class RestApi(MethodView):
 			# return(auth)
 			return(None)
 		else:
-			error = {'error': 'authorization headers are missing'}
+			error = {'error': 'authorization headers are missing', 'message': '..'}
 			self.response(error, 401)
 			# return make_response(self.make_json(error), 401)
 
@@ -183,12 +183,14 @@ class RestApi(MethodView):
 			return 
 			
 		for key in self.read_only_attributes:
+			print ("DEBUG: read_only_attributes:", key)
+			
 			# if (old[key] != new[key]):
 			if (self.x_getattr(old, key) != self.x_getattr(new, key) ):
 				# read-only attribute is changed	
 				print ("DEBUG: {} != {}".format(self.x_getattr(old, key), self.x_getattr(new, key) ))
 				print ("DEBUG: {} != {}".format(type(self.x_getattr(old, key)), type(self.x_getattr(new, key)) ))
-				error = {'error': 'cannot change read-only attribute.', 'path': key}
+				error = {'error': 'read-only violation', 'message': "Cannot change read-only attribute: path '{}'.".format(key)}
 				self.response(error, 409)
 			
 
@@ -200,7 +202,7 @@ class RestApi(MethodView):
 		# create in data layer
 		raise NotImplementedError('implement db_create in your own class')
 
-	def db_update(self,id,item):
+	def db_update(self,id,item, old_data=None):
 		# save/update in data layer
 		raise NotImplementedError('implement db_update in your own class')
 
@@ -283,12 +285,27 @@ class RestApi(MethodView):
 				return(getattr(obj, key))
 			else:
 				return(getattr(obj, key, default))
+
+	def redirect(self, path, code=302):	
+		resp = make_response(redirect(path), code)
+		print ("DEBUG: redirect {}, {}".format(path, code))
+		abort(resp)
 		
-		
-	def response(self, obj, code=200):
+	def response(self, obj, code=200, location=None):
 		'''make json HTTP response of "object" with status "code" (default: 200) '''
+
+		# response(True) -> HTTP 204 
+		if obj is True:
+			self.response(None, 204, location)
+	
+		
 		# short cut for :
-		abort(make_response(self.make_json(obj), code, {'Content-Type': 'application/json'}))
+		resp = make_response(self.make_json(obj), code, {'Content-Type': 'application/json'})
+
+		if location:
+			resp.headers['Location'] = location
+
+		abort(resp)
 		
 	
 	#
@@ -363,7 +380,7 @@ class RestApi(MethodView):
 
 		# 404 not found 
 		if data is None:
-			error = {'error': 'not found'}
+			error = {'error': 'not found', 'message': "..."}
 			self.response(error, 404)
 
 		# check permision for this item (if needed)
@@ -458,7 +475,7 @@ class RestApi(MethodView):
 
 		# 404 not found
 		if old_item is None:
-			 error = {'error': 'not found'}
+			 error = {'error': 'not found', 'message': '...'}
 			 self.response(error, 404)
 
 		# # check permision to update this item (if needed)
@@ -515,12 +532,13 @@ class RestApi(MethodView):
 
 		# not found:
 		if result is 0:
-			error = {'error': 'not found'}
+			error = {'error': 'not found', 'message': '...'}
 			print(error)
 			self.response(error, 404)
 			
 		# serialize json, http 204
-		self.response(None, 204)
+		# self.response(None, 204)
+		self.response(True)
 		
 
 	def patch(self, id, **kwargs):

@@ -50,8 +50,8 @@ app.add_url_rule('/gps_conf/<id>', view_func=gps_conf_view, methods=['GET', 'PUT
 # GPX files meta data /gps/<id>/files/
 #
 gpx_files_view = gpx_files.GpxFilesRestApi.as_view('gpx_files_api')
-app.add_url_rule('/gps/<gps_id>/files/', defaults={'id': None}, view_func=gpx_files_view, methods=['GET',])
-app.add_url_rule('/gps/<gps_id>/files/<id>', view_func=gpx_files_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
+app.add_url_rule('/gps/<gps_id>/files/<dir_tag>/', defaults={'id': None}, view_func=gpx_files_view, methods=['GET',])
+app.add_url_rule('/gps/<gps_id>/files/<dir_tag>/<id>', view_func=gpx_files_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
 #
 # GPX files upload/download data /gps/<gps_id>/files_data/
