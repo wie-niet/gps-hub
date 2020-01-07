@@ -71,7 +71,7 @@ export class DataService {
   // api_url = 'http://127.0.0.1:5000'
   // api_device_hardware_list  = '/gps-config/'
   // api_device_hardware  = '/gps-config/'
-  api_url = 'http://192.168.2.17:5000'
+  api_url = 'http://192.168.2.17:5000/api'
   api_device_hardware  = '/gps_dev/'
   api_device_hardware_list  = this.api_device_hardware
   api_device_config = '/gps_conf/'

@@ -32,9 +32,9 @@ CORS(app)
 # API /gps_dev_view
 #
 gps_dev_view = gpshublib.DeviceHardwareRestApi.as_view('gps_dev_api')
-app.add_url_rule('/gps_dev/', defaults={'id': None}, view_func=gps_dev_view, methods=['GET',])
-app.add_url_rule('/gps_dev/', view_func=gps_dev_view, methods=['POST',])
-app.add_url_rule('/gps_dev/<id>', view_func=gps_dev_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
+app.add_url_rule('/api/gps_dev/', defaults={'id': None}, view_func=gps_dev_view, methods=['GET',])
+app.add_url_rule('/api/gps_dev/', view_func=gps_dev_view, methods=['POST',])
+app.add_url_rule('/api/gps_dev/<id>', view_func=gps_dev_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
 
 
@@ -42,21 +42,21 @@ app.add_url_rule('/gps_dev/<id>', view_func=gps_dev_view, methods=['GET', 'PUT',
 # API /gps_hw
 #
 gps_conf_view = toml_config_table.DeviceConfigRestApi.as_view('gps_conf_api')
-app.add_url_rule('/gps_conf/', defaults={'id': None}, view_func=gps_conf_view, methods=['GET',])
-app.add_url_rule('/gps_conf/', view_func=gps_conf_view, methods=['POST',])
-app.add_url_rule('/gps_conf/<id>', view_func=gps_conf_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
+app.add_url_rule('/api/gps_conf/', defaults={'id': None}, view_func=gps_conf_view, methods=['GET',])
+app.add_url_rule('/api/gps_conf/', view_func=gps_conf_view, methods=['POST',])
+app.add_url_rule('/api/gps_conf/<id>', view_func=gps_conf_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
 #
 # GPX files meta data /gps/<id>/files/
 #
 gpx_files_view = gpx_files.GpxFilesRestApi.as_view('gpx_files_api')
-app.add_url_rule('/gps/<gps_id>/files/<dir_tag>/', defaults={'id': None}, view_func=gpx_files_view, methods=['GET',])
-app.add_url_rule('/gps/<gps_id>/files/<dir_tag>/<id>', view_func=gpx_files_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
+app.add_url_rule('/api/gps/<gps_id>/files/<dir_tag>/', defaults={'id': None}, view_func=gpx_files_view, methods=['GET',])
+app.add_url_rule('/api/gps/<gps_id>/files/<dir_tag>/<id>', view_func=gpx_files_view, methods=['GET', 'PUT', 'DELETE', 'PATCH'])
 
 #
 # GPX files upload/download data /gps/<gps_id>/files_data/
 #
-@app.route('/gps/<gps_id>/files_data/', methods=['POST'])
+@app.route('/api/gps/<gps_id>/files_data/', methods=['POST'])
 def upload_file(gps_id):
 	print( "upload file ")
 	
@@ -100,7 +100,7 @@ def upload_file(gps_id):
 #
 # GPX files download data /gps/<gps_id>/files_data/
 #
-@app.route('/gps/<gps_id>/files_data/<filename>', methods=['GET'])
+@app.route('/api/gps/<gps_id>/files_data/<filename>', methods=['GET'])
 def download_file(gps_id, filename):
 	print( "download file ")
 	# get GPS config dict
@@ -130,7 +130,7 @@ def download_file(gps_id, filename):
 
 
 
-@app.route('/api/ping', methods=['GET'])
+@app.route('/api/api/ping', methods=['GET'])
 def api_ping():
 		return(make_response('{ "status": true }', 200, {'Content-Type': 'application/json'}))
 
