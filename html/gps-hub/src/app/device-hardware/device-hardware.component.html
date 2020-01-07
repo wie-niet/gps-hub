@@ -1,0 +1,44 @@
+
+<!-- <h1>Device Hardware '{{ id }}'</h1> -->
+<h3>Hardware</h3>
+<span *ngIf="device_hardware" [hidden]="!device_hardware.sys_is_mounted" [style.background-color]="'red'" >Do not unplug! (device is mounted)</span><br>
+<span *ngIf="error" [style.background-color]="'red'" >Not saved! use refresh to or try saving again.</span><br>
+
+<span *ngIf="device_hardware">
+    <span > ID_FS_UUID: {{ device_hardware.ID_FS_UUID }} <br></span>
+    <span [hidden]="!device_hardware.ID_FS_LABEL" > ID_FS_LABEL {{ device_hardware.ID_FS_LABEL }} <br></span>
+    <span [hidden]="!device_hardware.ID_VENDOR" > ID_VENDOR {{ device_hardware.ID_VENDOR }} <br></span>
+    <span [hidden]="!device_hardware.ID_FS_TYPE" > ID_FS_TYPE {{ device_hardware.ID_FS_TYPE }} <br></span>
+    <span [hidden]="!device_hardware.ID_FS_USAGE" > ID_FS_USAGE {{ device_hardware.ID_FS_USAGE }} <br></span>
+    <span [hidden]="!device_hardware.ID_FS_VERSION" > ID_FS_VERSION {{ device_hardware.ID_FS_VERSION }} <br></span>
+    <span [hidden]="!device_hardware.ID_SERIAL_SHORT" > ID_SERIAL_SHORT {{ device_hardware.ID_SERIAL_SHORT }} <br></span>
+    <span  (click)="device_hardware.sys_is_mounted = !device_hardware.sys_is_mounted ; save(device_hardware)" [style.background-color]="device_hardware.sys_is_mounted ? 'red' : 'green'"> sys_is_mounted {{ device_hardware.sys_is_mounted | bool }} <br></span>
+    <span [style.background-color]="device_hardware.sys_is_connected ? 'orange' : 'grey'"> sys_is_connected {{ device_hardware.sys_is_connected }} <br></span>
+    <span> sys_mountpoint {{ device_hardware.sys_mountpoint }} <br></span>
+    <span> sys_dev_path {{ device_hardware.sys_dev_path }} <br></span>
+    <br>
+<!-- 
+    <button (click)="device_hardware.sys_is_mounted = true ; save(device_hardware)" >mount</button>
+    <button (click)="device_hardware.sys_is_mounted = false ; save(device_hardware)" >umount</button>
+    <button [disabled]="api_wait" (click)="save(device_hardware)" >save</button>
+    <button (click)="api_wait = !api_wait" >toggle api_wait lock</button>
+ -->
+    <button [disabled]="api_wait" (click)="mount(device_hardware)" >mount</button>
+    <button [disabled]="api_wait" (click)="umount(device_hardware)" >umount</button>
+
+    <button [disabled]="api_wait" (click)="load()" >refresh</button>
+</span>
+<!-- 
+<br>
+<pre>device_hardware = {{ device_hardware | json }} </pre><br>
+<pre>api_wait = {{ api_wait | json }} </pre><br>
+<pre>error = {{ error | json }} </pre><br>
+<br>
+<a [routerLink]="['/device-config', id]"> Config for {{ id }}</a> <br>
+<a [routerLink]="['/device-hardware', id]"> Hardware for {{ id }}</a> <br>
+
+<a [routerLink]="['/device-config']">Back to Device Config List</a> <br>
+<a [routerLink]="['/device-hardware']">Back to Device Hardware List</a> <br>
+
+<button [disabled]="api_wait" (click)="mount(device_hardware)" >mount</button>
+<button [disabled]="api_wait" (click)="umount(device_hardware)" >umount</button> -->

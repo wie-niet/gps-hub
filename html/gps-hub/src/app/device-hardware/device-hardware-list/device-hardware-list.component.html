@@ -1,0 +1,35 @@
+<h1>Device Hardware List</h1>
+<br />
+<br />
+<button (click)="refresh()" >refresh</button>
+
+<pre>api_wait = {{ api_wait | json }} </pre><br>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Unique ID</th>
+            <th>mounted</th>
+            <th>connected</th>
+        </tr>
+    </thead>
+    <tr *ngFor="let dev_hw of device_hardware_list">
+        <td>
+            <a [routerLink]="['/device-hardware', dev_hw.id]">
+                {{ dev_hw.id }}
+            </a>
+        </td>
+        <td>{{ dev_hw.sys_is_mounted }}</td>
+        <td>{{ dev_hw.sys_is_connected }}</td>
+        <td><span [hidden]="!dev_hw.sys_is_mounted" [style.background-color]="'red'">do not unplug!</span></td>
+    </tr>
+    
+    <tr *ngIf="!device_hardware_list || !device_hardware_list.length">
+        <td colspan="3">No devices found</td>
+    </tr>
+</table>
+<br />
+<!-- <pre>{{ device_hardware_list | json }} </pre> -->
+<br>
+<a [routerLink]="['/device-config']">Back to Device Config List</a> <br>
+<a [routerLink]="['/device-hardware']">Back to Device Hardware List</a> <br>

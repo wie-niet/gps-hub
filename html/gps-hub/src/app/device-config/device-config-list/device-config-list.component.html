@@ -1,0 +1,33 @@
+<h1>device-config-list works!</h1>
+<button (click)="load()" >refresh</button>
+
+<pre>api_wait = {{ api_wait | json }} </pre><br>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Unique ID</th>
+            <th>Label</th>
+            <th>auto_mount</th>
+        </tr>
+    </thead>
+    <tr *ngFor="let dev_conf of device_config_list">
+        <td>
+            <a [routerLink]="['/device-config', dev_conf.id]">
+                {{ dev_conf.id }}
+            </a>
+        </td>
+        <td>{{ dev_conf.label }}</td>
+        <td>{{ dev_conf.auto_mount }}</td>
+    </tr>
+    
+    <tr *ngIf="!device_config_list || !device_config_list.length">
+        <td colspan="3">No devices found</td>
+    </tr>
+</table>
+<br />
+
+
+<br>
+<a [routerLink]="['/device-config']">Back to Device Config List</a> <br>
+<a [routerLink]="['/device-hardware']">Back to Device Hardware List</a> <br>

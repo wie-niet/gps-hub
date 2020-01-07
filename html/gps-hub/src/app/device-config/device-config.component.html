@@ -1,0 +1,97 @@
+<h3>Config</h3>
+<span *ngIf="error" [style.background-color]="'red'" >Not saved! use refresh to or try saving again.</span><br>
+<table *ngIf="device_config" class="table table-hover" >
+	<tr>
+		<th>id</th> 
+		<td>{{ device_config.id }}</td>
+	</tr>
+	<tr>
+		<th>label</th> 
+		<td>
+			<input *ngIf="form_edit_mode" type="text" [(ngModel)]="device_config.label" >
+			<span *ngIf="!form_edit_mode">{{device_config.label}}</span>
+		</td>
+	</tr>
+	<tr>
+		<th>gpx_dir</th> 
+		<td>
+			<input *ngIf="form_edit_mode" type="checkbox" [(ngModel)]="device_config.has_gpx_dir"><input  *ngIf="form_edit_mode" [disabled]="!device_config.has_gpx_dir" type="text" [(ngModel)]="device_config.gpx_dir">
+			<span *ngIf="!form_edit_mode"> {{ device_config.has_gpx_dir }} : {{ device_config.gpx_dir}} </span>
+			
+		</td>
+	</tr>
+	<tr>
+		<th>gpx_archive_dir</th> 
+		<td>
+			<input *ngIf="form_edit_mode" type="checkbox" [(ngModel)]="device_config.has_gpx_archive_dir"><input  *ngIf="form_edit_mode" [disabled]="!device_config.has_gpx_archive_dir" type="text" [(ngModel)]="device_config.gpx_archive_dir">
+			<span *ngIf="!form_edit_mode"> {{ device_config.has_gpx_archive_dir }} : {{ device_config.gpx_archive_dir}} </span>			
+		</td>
+	</tr>
+	<tr>
+		<th>gpx_dir_hidden_list</th> 
+		<td>
+			<span >
+				<input *ngIf="form_edit_mode" type="text" (change)="device_config.gpx_dir_hidden_list.push($event.target.value); $event.target.value = ''" />
+			    <span  *ngFor="let file of device_config.gpx_dir_hidden_list;let i=index"> 
+					 <span> {{ file  }} 
+						 <button *ngIf="form_edit_mode" (click)="device_config.gpx_dir_hidden_list.splice(i, 1);">x</button>
+					 </span>;
+			    </span>
+			</span>
+			
+		</td>
+	</tr>	
+	<!-- <tr>
+		<th>gpx_dir_readonly_list</th>
+		<td>
+			<input *ngIf="form_edit_mode" type="text" [(ngModel)]="device_config.gpx_dir_readonly_list"  >
+			<span *ngIf="!form_edit_mode">{{device_config.gpx_dir_readonly_list | json }}</span>
+		</td>
+	</tr>	 -->
+
+	<tr>
+		<th>gpx_dir_readonly_list</th> 
+		<td>
+			<!-- <input *ngIf="form_edit_mode" type="text" [(ngModel)]="device_config.gpx_dir_readonly_list"  > -->
+			<span >
+				<input *ngIf="form_edit_mode" type="text" (change)="device_config.gpx_dir_readonly_list.push($event.target.value); $event.target.value = ''" />
+			    <span  *ngFor="let file of device_config.gpx_dir_readonly_list;let i=index"> 
+					 <span> {{ file  }} 
+						 <button *ngIf="form_edit_mode" (click)="device_config.gpx_dir_readonly_list.splice(i, 1);">x</button>
+					 </span>;
+			    </span>
+			</span>
+				
+		</td>
+	</tr>	
+
+
+	<tr>
+		<th>auto_mount</th> 
+		<td>
+			<input *ngIf="form_edit_mode" type="checkbox" [(ngModel)]="device_config.auto_mount" >
+			<span *ngIf="!form_edit_mode">{{device_config.auto_mount}}</span>
+		</td>
+	</tr>	
+</table>
+
+    <button [disabled]="api_wait" (click)="load()" >refresh</button>
+    <button *ngIf="!form_edit_mode" [disabled]="api_wait || !device_config" (click)="set_edit_mode(true)" >edit</button>
+    <button *ngIf="form_edit_mode" [disabled]="api_wait || !device_config" (click)="save(device_config)" >save</button>
+    <button [disabled]="api_wait || !device_config" (click)="delete(device_config.id)" >delete</button>
+			
+
+<!-- 
+<pre>
+id            = {{ id | json }}
+device_config = {{ device_config | json }} 
+api_wait      = {{ api_wait | json }}
+form_edit_mode= {{ form_edit_mode | json }}
+error         = {{ error | json }} 
+</pre><br>
+
+<a [routerLink]="['/device-config', id]"> Config for {{ id }}</a> <br>
+<a [routerLink]="['/device-hardware', id]"> Hardware for {{ id }}</a> <br>
+
+<a [routerLink]="['/device-config']">Back to Device Config List</a> <br>
+<a [routerLink]="['/device-hardware']">Back to Device Hardware List</a> <br> -->
